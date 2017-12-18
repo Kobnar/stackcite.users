@@ -13,7 +13,8 @@ requires = [
     'blinker',
     'mongoengine',
     'nose2',
-    'cov-core'
+    'cov-core',
+    'marshmallow'
 ]
 
 setup(
