@@ -3,6 +3,7 @@ import unittest
 import mongoengine
 
 from stackcite import testing
+from stackcite.data import testing as testing_data
 
 
 class UserBaseTestCase(unittest.TestCase):
@@ -91,7 +92,7 @@ class UserUnitTestCase(UserBaseTestCase):
     def test_add_group_raises_exception_for_invalid_group(self):
         """User.add_group() raises exception for invalid group
         """
-        from stackcite import validators
+        from stackcite.validators import data as validators
         with self.assertRaises(validators.ValidationError):
             self.user.add_group('invalid')
 
@@ -201,7 +202,7 @@ class UserUnitTestCase(UserBaseTestCase):
         """User.set_password() raises exception for invalid passwords
         """
         test_data = testing.data.invalid_passwords()
-        from stackcite import validators
+        from stackcite.validators import data as validators
         for invalid_password in test_data:
             with self.assertRaises(validators.ValidationError):
                 self.user.set_password(invalid_password)
@@ -217,7 +218,7 @@ class UserUnitTestCase(UserBaseTestCase):
         """
         self.user.set_password('T3stPa$$word')
         test_data = testing.data.invalid_passwords()
-        from stackcite import validators
+        from stackcite.validators import data as validators
         for invalid_password in test_data:
             with self.assertRaises(validators.ValidationError):
                 self.user.check_password(invalid_password)
@@ -252,7 +253,7 @@ class UserUnitTestCase(UserBaseTestCase):
     def test_password_fails_validation_with_invalid_passwords(self):
         """User.password setter raises exception for invalid passwords
         """
-        from stackcite import validators
+        from stackcite.validators import data as validators
         with self.assertRaises(validators.ValidationError):
             self.user.password = 'invalid_password'
 
@@ -287,7 +288,7 @@ class UserUnitTestCase(UserBaseTestCase):
 
 class UserIntegrationTestCase(UserBaseTestCase):
 
-    layer = testing.layers.MongoIntegrationTestLayer
+    layer = testing_data.layers.MongoIntegrationTestLayer
 
     def setUp(self):
         from .. import models

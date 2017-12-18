@@ -4,11 +4,14 @@ import mongoengine
 from datetime import datetime
 
 from stackcite import config
-from stackcite import validators
-from stackcite.users import exceptions
+from stackcite import data
+
+from stackcite.validators import data as validators
+
+from . import exceptions
 
 
-class User(mongoengine.Document):
+class User(data.IDocument):
     """
     A user account.
     """
