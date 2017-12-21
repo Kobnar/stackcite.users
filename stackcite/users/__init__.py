@@ -4,13 +4,15 @@ from pyramid.config import Configurator
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.renderers import JSON
 
+from stackcite import api
+
 from . import auth, resources
 
 
 def root_factory(request=None):
-    root = resources.UserCollection()
+    root = resources.UserCollection(None, '')
+    root['auth'] = resources.AuthResource
     root['conf'] = resources.ConfResource
-    root['users'] = resources.AuthResource
     return root
 
 
@@ -39,6 +41,7 @@ def main(global_config, **settings):
     config.add_renderer('json', JSON())
 
     # Scan for decorators
+    config.scan(api)
     config.scan()
 
     return config.make_wsgi_app()
