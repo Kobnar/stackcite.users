@@ -1,6 +1,6 @@
 import unittest
 
-from stackcite import testing
+from stackcite.users import testing
 
 
 class UserSchemaTests(unittest.TestCase):
@@ -12,10 +12,12 @@ class UserSchemaTests(unittest.TestCase):
 
 class UserSchemaFieldTests(UserSchemaTests):
 
+    layer = testing.layers.UnitTestLayer
+
     def test_invalid_group_fails_validation(self):
         """User schema returns an error if an invalid group is set
         """
-        from stackcite.config import auth
+        from stackcite.users import auth
         data = {'groups': ['invalid', auth.STAFF]}
         result = self.schema.load(data).errors.keys()
         self.assertIn('groups', result)
@@ -23,7 +25,7 @@ class UserSchemaFieldTests(UserSchemaTests):
     def test_missing_users_group_fails_validation(self):
         """User schema returns an error if a default group is missing
         """
-        from stackcite.config import auth
+        from stackcite.users import auth
         data = {'groups': [auth.STAFF, auth.ADMIN]}
         result = self.schema.load(data).errors.keys()
         self.assertIn('groups', result)
@@ -31,7 +33,7 @@ class UserSchemaFieldTests(UserSchemaTests):
     def test_valid_groups_pass_validation(self):
         """User schema does not return an error if all groups are valid
         """
-        from stackcite.config import auth
+        from stackcite.users import auth
         data = {'groups': [auth.USERS, auth.STAFF, auth.ADMIN]}
         result = self.schema.load(data).errors.keys()
         self.assertNotIn('groups', result)
@@ -51,6 +53,8 @@ class UserSchemaFieldTests(UserSchemaTests):
 
 
 class UserSchemaCreateTests(UserSchemaTests):
+
+    layer = testing.layers.UnitTestLayer
 
     def setUp(self):
         super().setUp()
@@ -73,7 +77,7 @@ class UserSchemaCreateTests(UserSchemaTests):
     def test_invalid_group_fails_validation(self):
         """User POST schema returns an error for an invalid group
         """
-        from stackcite.config import auth
+        from stackcite.users import auth
         data = {'groups': ['invalid', auth.STAFF]}
         result = self.schema.load(data).errors
         self.assertIn('groups', result)
@@ -81,7 +85,7 @@ class UserSchemaCreateTests(UserSchemaTests):
     def test_missing_users_group_fails_validation(self):
         """User POST schema returns an error if default group is missing
         """
-        from stackcite.config import auth
+        from stackcite.users import auth
         data = {'groups': [auth.STAFF, auth.ADMIN]}
         result = self.schema.load(data).errors
         self.assertIn('groups', result)
@@ -89,7 +93,7 @@ class UserSchemaCreateTests(UserSchemaTests):
     def test_valid_groups_pass_validation(self):
         """User POST schema does not return an error if all groups are valid
         """
-        from stackcite.config import auth
+        from stackcite.users import auth
         data = {'groups': [auth.USERS, auth.STAFF, auth.ADMIN]}
         result = self.schema.load(data).errors
         self.assertNotIn('groups', result)
@@ -103,6 +107,8 @@ class UserSchemaCreateTests(UserSchemaTests):
 
 class UserSchemaRetrieveTests(UserSchemaTests):
 
+    layer = testing.layers.UnitTestLayer
+
     def setUp(self):
         super().setUp()
         self.schema.method = 'GET'
@@ -110,12 +116,16 @@ class UserSchemaRetrieveTests(UserSchemaTests):
 
 class UserSchemaUpdateTests(UserSchemaTests):
 
+    layer = testing.layers.UnitTestLayer
+
     def setUp(self):
         super().setUp()
         self.schema.method = 'PUT'
 
 
 class UserSchemaDeleteTests(UserSchemaTests):
+
+    layer = testing.layers.UnitTestLayer
 
     def setUp(self):
         super().setUp()

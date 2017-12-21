@@ -1,6 +1,6 @@
 import unittest
 
-from stackcite import testing
+from stackcite.users import testing
 
 
 class AuthenticationErrorBaseTestCase(unittest.TestCase):

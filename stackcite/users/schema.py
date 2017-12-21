@@ -5,16 +5,16 @@ from marshmallow import (
     ValidationError
 )
 
-from stackcite.schema import (
+from stackcite.api.schema import (
     fields as api_fields,
     schema as api_schema
 )
 
-from . import models
+from . import data
 
 
 def _validate_default_groups(value):
-    for default_group in models.User.DEFAULT_GROUPS:
+    for default_group in data.User.DEFAULT_GROUPS:
         if default_group not in value:
             msg = 'Default group missing: {} not in {}'.format(
                 default_group, value)

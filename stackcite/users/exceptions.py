@@ -1,7 +1,10 @@
-from stackcite import exceptions as exc
+from stackcite.api import exceptions as _exc
 
 
-class AuthenticationError(exc.StackciteError):
+StackciteError = _exc.StackciteError
+
+
+class AuthenticationError(StackciteError):
     """
     A custom exception raised when authentication fails for whatever reason.
     """
