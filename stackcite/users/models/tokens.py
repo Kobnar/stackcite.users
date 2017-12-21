@@ -77,18 +77,6 @@ class AuthToken(mongoengine.Document):
         ]
     }
 
-    def _serialize(self, fields):
-        with context_managers.no_dereference(AuthToken):
-            return {
-                'key': self.key,
-                'user': {
-                    'id': str(self.user.id) if self.user.id else None,
-                    'groups': self.user.groups
-                } if self.user else {},
-                'issued': str(self.issued),
-                'touched': str(self.touched)
-            }
-
 
 class ConfirmToken(mongoengine.Document):
     """
@@ -140,13 +128,3 @@ class ConfirmToken(mongoengine.Document):
             }
         ]
     }
-
-    def _serialize(self, fields):
-        with context_managers.no_dereference(ConfirmToken):
-            return {
-                'key': self.key,
-                'user': {
-                    'id': str(self.user.id) if self.user.id else None,
-                } if self.user else {},
-                'issued': str(self.issued)
-            }

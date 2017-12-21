@@ -168,35 +168,6 @@ class AuthTokenIntegrationTestCase(AuthTokenBaseTestCase):
             tokens.AuthToken.objects.get(_key=key)
         except mongoengine.DoesNotExist as err:
             msg = 'Unexpected exception raised: {}'
-            self.fail(msg.format(err))
-
-    def test_serialize_returns_accurate_dict(self):
-        """AuthToken.serialize() returns an accurate dictionary
-        """
-        self.user.save()
-        self.api_token.clean()
-        expected = {
-            'key': self.api_token.key,
-            'user': {
-                'id': str(self.user.id),
-                'groups': []
-            },
-            'issued': str(self.api_token.issued),
-            'touched': str(self.api_token.touched)
-        }
-        result = self.api_token.serialize()
-        self.assertEqual(expected, result)
-
-    def test_serialized_performs_zero_queries(self):
-        """AuthToken.serialize() performs zero database queries
-        """
-        from mongoengine import context_managers
-        self.api_token.user.save()
-        self.api_token.save()
-        expected = 0
-        with context_managers.query_counter() as result:
-            self.api_token.serialize()
-            self.assertEqual(expected, result)
 
 
 class ConfirmTokenBaseTestCase(unittest.TestCase):
@@ -331,32 +302,6 @@ class ConfirmTokenIntegrationTestCase(ConfirmTokenBaseTestCase):
         expected = self.user.id
         result = self.conf_token.confirm_user().id
         self.assertEqual(expected, result)
-
-    def test_serialize_returns_accurate_dict(self):
-        """ConfirmToken.serialize() returns an accurate dictionary
-        """
-        self.user.save()
-        self.conf_token.clean()
-        expected = {
-            'key': self.conf_token.key,
-            'user': {
-                'id': str(self.user.id)
-            },
-            'issued': str(self.conf_token.issued)
-        }
-        result = self.conf_token.serialize()
-        self.assertEqual(expected, result)
-
-    def test_serialized_performs_zero_queries(self):
-        """ConfirmToken.serialize() performs zero database queries
-        """
-        from mongoengine import context_managers
-        self.conf_token.user.save()
-        self.conf_token.save()
-        expected = 0
-        with context_managers.query_counter() as result:
-            self.conf_token.serialize()
-            self.assertEqual(expected, result)
 
     def test_deleted_user_cascades_to_confirm_token(self):
         """ConfirmToken.user is set to cascade delete associated ConfirmToken
