@@ -26,7 +26,7 @@ setup(
     author='Konrad R.K. Ludwig',
     author_email='konrad.rk.ludwig@gmail.com',
     url='http://www.konradrkludwig.com/',
-    packages=find_packages(),
+    packages=['stackcite.users'],
     namespace_packages=['stackcite'],
     install_requires=requires
 )
