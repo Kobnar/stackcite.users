@@ -307,8 +307,8 @@ class ConfirmTokenIntegrationTestCase(ConfirmTokenBaseTestCase):
         """
         self.user.save()
         self.conf_token.confirm_user()
-        from stackcite.users import data as db
-        result = db.User.objects.get(id=self.user.id).confirmed
+        from stackcite.users import models
+        result = models.User.objects.get(id=self.user.id).confirmed
         self.assertTrue(result)
 
     def test_confirm_deletes_confirmation_token(self):
@@ -319,9 +319,9 @@ class ConfirmTokenIntegrationTestCase(ConfirmTokenBaseTestCase):
         key = self.conf_token.key
         self.conf_token.confirm_user()
         import mongoengine
-        from stackcite.users import data as db
+        from stackcite.users import models
         with self.assertRaises(mongoengine.DoesNotExist):
-            db.ConfirmToken.objects.get(_key=key)
+            models.ConfirmToken.objects.get(_key=key)
 
     def test_confirm_returns_user(self):
         """ConfirmToken.confirm() returns associated User object
@@ -364,8 +364,8 @@ class ConfirmTokenIntegrationTestCase(ConfirmTokenBaseTestCase):
         self.conf_token.user.save()
         self.conf_token.save()
         key = self.conf_token.key
-        from stackcite.users import data as db
-        db.User.objects(id=self.conf_token.user.id).delete()
+        from stackcite.users import models
+        models.User.objects(id=self.conf_token.user.id).delete()
         import mongoengine
         with self.assertRaises(mongoengine.DoesNotExist):
-            db.ConfirmToken.objects.get(_key=key)
+            models.ConfirmToken.objects.get(_key=key)

@@ -16,13 +16,13 @@ class AuthPolicyIntegrationTestCase(unittest.TestCase):
     layer = testing.layers.MongoTestLayer
 
     def setUp(self):
-        from stackcite.users import data as db
+        from stackcite.users import models
         from ..policies import AuthTokenAuthenticationPolicy
         self.auth_pol = AuthTokenAuthenticationPolicy()
-        db.User.drop_collection()
-        db.AuthToken.drop_collection()
-        self.user = db.User.new('test@email.com', 'T3stPa$$word', save=True)
-        self.token = db.AuthToken.new(self.user, save=True)
+        models.User.drop_collection()
+        models.AuthToken.drop_collection()
+        self.user = models.User.new('test@email.com', 'T3stPa$$word', save=True)
+        self.token = models.AuthToken.new(self.user, save=True)
 
     def test_authenticated_userid_returns_user_id(self):
         """AuthTokenAuthenticationPolicy.authenticated_userid() returns an authenticated ObjectId

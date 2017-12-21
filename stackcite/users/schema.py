@@ -10,11 +10,11 @@ from stackcite.api.schema import (
     schema as api_schema
 )
 
-from . import data
+from . import models
 
 
 def _validate_default_groups(value):
-    for default_group in data.User.DEFAULT_GROUPS:
+    for default_group in models.User.DEFAULT_GROUPS:
         if default_group not in value:
             msg = 'Default group missing: {} not in {}'.format(
                 default_group, value)
@@ -25,7 +25,7 @@ def _validate_required_fields(data, required_fields):
     for field in required_fields:
         value = data.get(field)
         if not value:
-            msg = 'Missing data for required field.'
+            msg = 'Missing models for required field.'
             raise ValidationError(msg, [field])
 
 

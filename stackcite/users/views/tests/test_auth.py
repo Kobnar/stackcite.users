@@ -11,9 +11,9 @@ class AuthViewsTests(testing.views.CollectionViewTestCase):
     VIEW_CLASS = views.AuthViews
 
     def setUp(self):
-        from stackcite.users import data as db
-        db.AuthToken.drop_collection()
-        db.User.drop_collection()
+        from stackcite.users import models
+        models.AuthToken.drop_collection()
+        models.User.drop_collection()
         super().setUp()
 
     def make_view(self, name='api_v1'):
@@ -36,7 +36,7 @@ class AuthViewsCreateTests(AuthViewsTests):
         self.assertEqual(201, result)
 
     def test_create_invalid_data_returns_400(self):
-        """AuthViews.create() with invalid data raises 400 BAD REQUEST
+        """AuthViews.create() with invalid models raises 400 BAD REQUEST
         """
         from stackcite.api import exceptions as exc
         data = {

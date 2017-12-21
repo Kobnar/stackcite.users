@@ -18,11 +18,11 @@ class AuthUtilsBaseIntegrationTestCase(unittest.TestCase):
     layer = testing.layers.MongoTestLayer
 
     def setUp(self):
-        from stackcite.users import data as db
-        db.User.drop_collection()
-        db.AuthToken.drop_collection()
-        self.user = db.User.new('test@email.com', 'T3stPa$$word', save=True)
-        self.token = db.AuthToken.new(self.user, save=True)
+        from stackcite.users import models
+        models.User.drop_collection()
+        models.AuthToken.drop_collection()
+        self.user = models.User.new('test@email.com', 'T3stPa$$word', save=True)
+        self.token = models.AuthToken.new(self.user, save=True)
 
 
 class GetAuthTokenIntegrationTestCase(AuthUtilsBaseIntegrationTestCase):

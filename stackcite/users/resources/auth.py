@@ -1,7 +1,7 @@
 from pyramid import security as sec
 
 from stackcite.api import resources
-from stackcite.users import data as db, schema
+from stackcite.users import models, schema
 
 
 class AuthResource(resources.APIIndexResource):
@@ -22,8 +22,8 @@ class AuthResource(resources.APIIndexResource):
         """
         email = data.get('email')
         password = data.get('password')
-        user = db.User.authenticate(email, password)
-        token = db.AuthToken(_user=user)
+        user = models.User.authenticate(email, password)
+        token = models.AuthToken(_user=user)
         token.save()
         user.touch_login()
         user.save()

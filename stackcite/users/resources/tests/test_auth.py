@@ -8,16 +8,16 @@ class AuthResourceIntegrationTestCase(unittest.TestCase):
     layer = testing.layers.MongoTestLayer
 
     def setUp(self):
-        from stackcite.users import data as db
-        db.User.drop_collection()
-        db.AuthToken.drop_collection()
+        from stackcite.users import models
+        models.User.drop_collection()
+        models.AuthToken.drop_collection()
         from stackcite.users import resources
         self.collection = resources.AuthResource(None, 'auth')
 
     def test_create_updates_last_login(self):
         """AuthResource.create() updates User.last_login with a more recent time
         """
-        from stackcite.users import data as db
+        from stackcite.users import models
         email = 'test@email.com'
         password = 'T3stPa$$word'
         # Create user and set last_login
@@ -31,7 +31,7 @@ class AuthResourceIntegrationTestCase(unittest.TestCase):
         auth_data = {'email': email, 'password': password}
         self.collection.create(auth_data)
         # Query updated user
-        user = db.User.objects.get(email=email)
+        user = models.User.objects.get(email=email)
         last_login = user.last_login
         login_delta = last_login - prev_login
         self.assertGreater(login_delta.microseconds, 1000)
@@ -87,14 +87,14 @@ class AuthResourceIntegrationTestCase(unittest.TestCase):
     def test_retrieve_returns_token_on_success(self):
         """AuthResource.retrieve() returns the correct API token if it exists
         """
-        from stackcite.users import data as db
+        from stackcite.users import models
         email = 'test@email.com'
         password = 'T3stPa$$word'
         # Create user
         user = testing.utils.create_user(email, password)
         user.save()
         # Make new token
-        token = db.AuthToken(_user=user)
+        token = models.AuthToken(_user=user)
         token.save()
         result = self.collection.retrieve(token).key
         expected = token.key
@@ -103,14 +103,14 @@ class AuthResourceIntegrationTestCase(unittest.TestCase):
     def test_update_returns_token_on_success(self):
         """AuthResource.update() returns the correct API token if it exists
         """
-        from stackcite.users import data as db
+        from stackcite.users import models
         email = 'test@email.com'
         password = 'T3stPa$$word'
         # Create user
         user = testing.utils.create_user(email, password)
         user.save()
         # Make new token
-        token = db.AuthToken(_user=user)
+        token = models.AuthToken(_user=user)
         token.save()
         result = self.collection.update(token).key
         expected = token.key
@@ -125,14 +125,14 @@ class AuthResourceIntegrationTestCase(unittest.TestCase):
     def test_delete_success_returns_true(self):
         """AuthResource.delete() returns 'True' if successful
         """
-        from stackcite.users import data as db
+        from stackcite.users import models
         email = 'test@email.com'
         password = 'T3stPa$$word'
         # Create user
         user = testing.utils.create_user(email, password)
         user.save()
         # Create auth token
-        token = db.AuthToken(_user=user)
+        token = models.AuthToken(_user=user)
         token.save()
         result = self.collection.delete(token)
         self.assertTrue(result)

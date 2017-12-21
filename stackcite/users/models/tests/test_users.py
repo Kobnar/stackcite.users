@@ -126,8 +126,8 @@ class UserUnitTestCase(UserBaseTestCase):
         """User.confirm() adds user to default group
         """
         self.user.confirm()
-        from stackcite.users import data as db
-        default_groups = db.User.DEFAULT_GROUPS
+        from stackcite.users import models
+        default_groups = models.User.DEFAULT_GROUPS
         for g in default_groups:
             self.assertIn(g, self.user.groups)
 
@@ -315,7 +315,7 @@ class UserIntegrationTestCase(UserBaseTestCase):
         self.assertIsNone(user.id)
 
     def test_new_saves_user_if_save_set(self):
-        """User.new() saves data if 'save=True'
+        """User.new() saves models if 'save=True'
         """
         from .. import users
         user = users.User.new('test@email.com', 'T3stPa$$word', True)

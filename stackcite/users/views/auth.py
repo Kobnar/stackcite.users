@@ -5,7 +5,7 @@ from mongoengine import context_managers
 from pyramid.view import view_defaults, view_config
 
 from stackcite.api import views, exceptions as api_exc
-from stackcite.users import data as db, exceptions as exc, resources, schema
+from stackcite.users import models, exceptions as exc, resources, schema
 
 
 @view_defaults(context=resources.AuthResource, renderer='json')
@@ -18,7 +18,7 @@ class AuthViews(views.BaseView):
             auth_schm = schema.Authenticate(strict=True)
             auth_data, errors = auth_schm.load(auth_data)
             auth_token = self.context.create(auth_data)
-            with context_managers.no_dereference(db.AuthToken):
+            with context_managers.no_dereference(models.AuthToken):
                 token_schm = schema.AuthToken()
                 auth_token, errors = token_schm.dump(auth_token)
             self.request.response.status_code = 201

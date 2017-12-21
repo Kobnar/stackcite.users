@@ -11,8 +11,8 @@ class UserCollectionViewsTests(testing.views.APIViewTestCase):
     VIEW_CLASS = views.UserCollectionViews
 
     def setUp(self):
-        from stackcite.users import data as db
-        db.User.drop_collection()
+        from stackcite.users import models
+        models.User.drop_collection()
 
 
 class UserCollectionCreateViewsTests(UserCollectionViewsTests):
@@ -59,10 +59,10 @@ class UserCollectionCreateViewsTests(UserCollectionViewsTests):
         view.request.json_body = params
         response = view.create()
         user_id = response['id']
-        from stackcite.users import data as db
+        from stackcite.users import models
         from mongoengine import DoesNotExist
         try:
-            db.User.objects.get(id=user_id)
+            models.User.objects.get(id=user_id)
         except DoesNotExist as err:
             msg = 'Unexpected exception raised: {}'
             self.fail(msg.format(err))

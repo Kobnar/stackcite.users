@@ -3,7 +3,7 @@ import mongoengine
 from pyramid import security as sec
 
 from stackcite.api import resources
-from stackcite.users import data as db
+from stackcite.users import models
 
 
 _LOG = logging.getLogger(__name__)
@@ -21,12 +21,12 @@ class ConfResource(resources.APIIndexResource):
         one already exists in the database.
         """
         email = data['email']
-        user = db.User.objects.get(email=email)
-        token = db.ConfirmToken.new(user)
+        user = models.User.objects.get(email=email)
+        token = models.ConfirmToken.new(user)
         try:
             token.save()
         except mongoengine.NotUniqueError:
-            db.ConfirmToken.objects(_user=user).delete()
+            models.ConfirmToken.objects(_user=user).delete()
             token.save()
         _LOG.info('Confirmation key: {} {}'.format(user.email, token.key))
         return token
@@ -36,7 +36,7 @@ class ConfResource(resources.APIIndexResource):
         Confirms a user's registration.
         """
         key = data['key']
-        token = db.ConfirmToken.objects.get(_key=key)
+        token = models.ConfirmToken.objects.get(_key=key)
         user = token.confirm_user()
         _LOG.info('Confirmation key: {} {}'.format(user.email, token.key))
         return token

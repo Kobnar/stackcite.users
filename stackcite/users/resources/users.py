@@ -4,7 +4,7 @@ from contextlib import suppress
 from pyramid import security as sec
 
 from stackcite.api import auth, resources
-from stackcite.users import data as db, schema
+from stackcite.users import models, schema
 
 
 _LOG = logging.getLogger(__name__)
@@ -31,8 +31,8 @@ class UserDocument(resources.APIDocumentResource):
     def delete(self):
         # Delete associated CachedReferenceFields
         with suppress(mongoengine.DoesNotExist):
-            db.AuthToken.objects(_user__id=self.id).delete()
-            db.ConfirmToken.objects(_user__id=self.id).delete()
+            models.AuthToken.objects(_user__id=self.id).delete()
+            models.ConfirmToken.objects(_user__id=self.id).delete()
         return super().delete()
 
 
@@ -44,13 +44,13 @@ class UserCollection(resources.APICollectionResource):
         sec.DENY_ALL
     ]
 
-    _COLLECTION = db.User
+    _COLLECTION = models.User
     _DOCUMENT_RESOURCE = UserDocument
 
     _SCHEMA = schema.User
 
     def create(self, data):
         user = super().create(data)
-        conf_token = db.ConfirmToken.new(user, save=True)
+        conf_token = models.ConfirmToken.new(user, save=True)
         _LOG.info('New confirmation token: {}'.format(conf_token.key))
         return user

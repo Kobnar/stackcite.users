@@ -1,8 +1,8 @@
-from stackcite.users import data as db
+from stackcite.users import models
 
 
 def create_user(email, password, groups=(), save=False):
-    user = db.User()
+    user = models.User()
     user.email = email
     user.set_password(password)
     for g in groups:
@@ -13,14 +13,14 @@ def create_user(email, password, groups=(), save=False):
 
 
 def create_auth_token(user, clean=True, save=False):
-    token = db.AuthToken(_user=user)
+    token = models.AuthToken(_user=user)
     if save:
         token.save()
     return token
 
 
 def create_conf_token(user, clean=True, save=False):
-    token = db.ConfirmToken(_user=user)
+    token = models.ConfirmToken(_user=user)
     if save:
         token.save()
     return token

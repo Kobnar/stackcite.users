@@ -12,9 +12,9 @@ class ConfirmationViewsTestCase(testing.views.BaseViewTestCase):
     VIEW_CLASS = ConfirmationViews
 
     def setUp(self):
-        from stackcite.users import data as db
-        db.User.drop_collection()
-        db.ConfirmToken.drop_collection()
+        from stackcite.users import models
+        models.User.drop_collection()
+        models.ConfirmToken.drop_collection()
         super().setUp()
 
 
@@ -27,12 +27,12 @@ class ConfirmationViewsCreateTestCase(ConfirmationViewsTestCase):
         email = 'test@email.com'
         password = 'T3stPa$$word'
         from stackcite import data as db
-        user = db.User.new(email, password, save=True)
+        user = models.User.new(email, password, save=True)
         view.request.json_body = {'email': email}
         view.create()
         import mongoengine
         try:
-            db.ConfirmToken.objects.get(_user=user)
+            models.ConfirmToken.objects.get(_user=user)
         except mongoengine.DoesNotExist as err:
             msg = 'ConfirmationToken does not exist: {}'.format(err)
             self.fail(msg=msg)
@@ -51,9 +51,9 @@ class ConfirmationViewsUpdateTestCase(ConfirmationViewsTestCase):
 
     def setUp(self):
         super().setUp()
-        from stackcite.users import data as db
-        self.user = db.User.new('test@email.com', 'T3stPa$$word', save=True)
-        self.token = db.ConfirmToken.new(self.user, save=True)
+        from stackcite.users import models
+        self.user = models.User.new('test@email.com', 'T3stPa$$word', save=True)
+        self.token = models.ConfirmToken.new(self.user, save=True)
 
     def test_update_deletes_confirmation_token(self):
         """ConfirmationViews.update() deletes ConfirmationToken in database
@@ -62,9 +62,9 @@ class ConfirmationViewsUpdateTestCase(ConfirmationViewsTestCase):
         view.request.json_body = {'key': self.token.key}
         view.update()
         import mongoengine
-        from stackcite.users import data as db
+        from stackcite.users import models
         with self.assertRaises(mongoengine.DoesNotExist):
-            db.ConfirmToken.objects.get(_key=self.token.key)
+            models.ConfirmToken.objects.get(_key=self.token.key)
 
     def test_update_confirms_user(self):
         """ConfirmationViews.update() confirms associated user

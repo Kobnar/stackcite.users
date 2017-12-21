@@ -2,7 +2,7 @@ from mongoengine import context_managers
 from pyramid.view import view_defaults, view_config
 
 from stackcite.api import views, exceptions
-from stackcite.users import data as db, resources, schema
+from stackcite.users import models, resources, schema
 
 
 @view_defaults(context=resources.ConfResource, renderer='json')
@@ -24,7 +24,7 @@ class ConfirmationViews(views.BaseView):
         schm = schema.UpdateConfirmationToken()
         data, errors = schm.load(data)
         conf_token = self.context.update(data)
-        with context_managers.no_dereference(db.ConfirmToken):
+        with context_managers.no_dereference(models.ConfirmToken):
             return {
                 'user': {
                     'id': str(conf_token.user.id)
