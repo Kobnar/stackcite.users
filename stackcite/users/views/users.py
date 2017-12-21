@@ -10,7 +10,10 @@ class UserDocumentViews(views.BaseView):
     @view_config(request_method='GET', permission='retrieve')
     @views.managed_view
     def retrieve(self):
-        pass
+        schm = self.context.schema()
+        user = self.context.retrieve()
+        result, errors = schm.dump(user)
+        return result
 
     @view_config(request_method='PUT', permission='update')
     @views.managed_view
@@ -19,7 +22,7 @@ class UserDocumentViews(views.BaseView):
 
     @view_config(request_method='DELETE', permission='delete')
     @views.managed_view
-    def retrieve(self):
+    def delete(self):
         pass
 
 

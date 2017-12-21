@@ -47,6 +47,8 @@ class UserCollection(resources.APICollectionResource):
     _COLLECTION = db.User
     _DOCUMENT_RESOURCE = UserDocument
 
+    _SCHEMA = schema.User
+
     def create(self, data):
         user = super().create(data)
         conf_token = db.ConfirmToken.new(user, save=True)
