@@ -66,16 +66,3 @@ class UserCollectionCreateViewsTests(UserCollectionViewsTests):
         except DoesNotExist as err:
             msg = 'Unexpected exception raised: {}'
             self.fail(msg.format(err))
-
-
-class UserCollectionRetrieveViewsTests(UserCollectionViewsTests):
-
-    pass
-
-
-class UserDocumentViewsTests(testing.views.APIViewTestCase):
-
-    from stackcite.users import resources
-    from stackcite.users import views
-    RESOURCE_CLASS = resources.UserDocument
-    VIEW_CLASS = views.UserDocumentViews
