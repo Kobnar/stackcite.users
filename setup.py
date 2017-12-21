@@ -15,7 +15,9 @@ requires = [
     'mongoengine',
     'nose2',
     'cov-core',
-    'marshmallow'
+    'marshmallow',
+    'webtest',
+    'waitress'
 ]
 
 setup(
@@ -28,5 +30,18 @@ setup(
     url='http://www.konradrkludwig.com/',
     packages=['stackcite.users'],
     namespace_packages=['stackcite'],
-    install_requires=requires
+    install_requires=requires,
+    classifiers=[
+    "Programming Language :: Python",
+    "Framework :: Pyramid",
+    "Topic :: Internet :: WWW/HTTP",
+    "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
+    ],
+    keywords='web pyramid pylons',
+    include_package_data=True,
+    zip_safe=False,
+    entry_points="""\
+    [paste.app_factory]
+    main = stackcite.users:main
+    """,
 )
