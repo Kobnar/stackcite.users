@@ -11,22 +11,16 @@ from stackcite.users import data as db, exceptions as exc, resources, schema
 @view_defaults(context=resources.AuthResource, renderer='json')
 class AuthViews(views.BaseView):
 
-    METHODS = {
-        'POST': 'create',
-        'GET': 'retrieve',
-        'PUT': 'update',
-        'DELETE': 'delete'
-    }
-
     @view_config(request_method='POST', permission='create')
     def create(self):
         try:
             auth_data = self.request.json_body
-            schm = schema.Authenticate(strict=True)
-            auth_data, errors = schm.load(auth_data)
+            auth_schm = schema.Authenticate(strict=True)
+            auth_data, errors = auth_schm.load(auth_data)
             auth_token = self.context.create(auth_data)
             with context_managers.no_dereference(db.AuthToken):
-                auth_token, errors = self.context.dump(auth_token)
+                token_schm = schema.AuthToken()
+                auth_token, errors = token_schm.dump(auth_token)
             self.request.response.status_code = 201
             return auth_token
 

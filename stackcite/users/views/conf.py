@@ -8,11 +8,6 @@ from stackcite.users import data as db, resources, schema
 @view_defaults(context=resources.ConfResource, renderer='json')
 class ConfirmationViews(views.BaseView):
 
-    METHODS = {
-        'POST': 'create',
-        'PUT': 'update',
-    }
-
     @view_config(request_method='POST')
     @views.managed_view
     def create(self):
