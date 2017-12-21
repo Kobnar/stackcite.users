@@ -44,14 +44,16 @@ class AuthViews(views.BaseView):
     def retrieve(self):
         token = self.request.token
         auth_token = self.context.retrieve(token)
-        auth_token = self.context.dump(auth_token).data
+        schm = schema.AuthToken()
+        auth_token, errors = schm.dump(auth_token)
         return auth_token
 
     @view_config(request_method='PUT', permission='update')
     def update(self):
         token = self.request.token
         auth_token = self.context.update(token)
-        auth_token = self.context.dump(auth_token).data
+        schm = schema.AuthToken()
+        auth_token, errors = schm.dump(auth_token)
         return auth_token
 
     @view_config(request_method='DELETE', permission='delete')
