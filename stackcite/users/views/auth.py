@@ -16,11 +16,11 @@ class AuthViews(views.BaseView):
         try:
             auth_data = self.request.json_body
             auth_schm = schema.Authenticate(strict=True)
-            auth_data, errors = auth_schm.load(auth_data)
+            auth_data = auth_schm.load(auth_data).data
             auth_token = self.context.create(auth_data)
             with context_managers.no_dereference(models.AuthToken):
                 token_schm = schema.AuthToken()
-                auth_token, errors = token_schm.dump(auth_token)
+                auth_token = token_schm.dump(auth_token).data
             self.request.response.status_code = 201
             return auth_token
 

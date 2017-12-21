@@ -19,6 +19,8 @@ class UserDocumentTestCase(UserResourceTestCase):
 
         from stackcite.users import models
         models.User.drop_collection()
+        models.ConfirmToken.drop_collection()
+        models.AuthToken.drop_collection()
 
         user = testing.utils.create_user(
             'test@email.com', 'T3stPa$$word', save=True)

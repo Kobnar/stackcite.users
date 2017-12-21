@@ -1,5 +1,2 @@
 from .users import User
-from .tokens import (
-    AuthToken,
-    ConfirmToken
-)
+from .tokens import AuthToken, ConfirmToken

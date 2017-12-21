@@ -9,7 +9,7 @@ from stackcite.users import models
 _LOG = logging.getLogger(__name__)
 
 
-class ConfResource(resources.APIIndexResource):
+class ConfirmResource(resources.APIIndexResource):
 
     __acl__ = [
         (sec.Allow, sec.Everyone, ('create', 'update'))

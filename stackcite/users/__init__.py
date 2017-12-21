@@ -12,7 +12,7 @@ from . import auth, resources
 def root_factory(request=None):
     root = resources.UserCollection(None, '')
     root['auth'] = resources.AuthResource
-    root['conf'] = resources.ConfResource
+    root['conf'] = resources.ConfirmResource
     return root
 
 

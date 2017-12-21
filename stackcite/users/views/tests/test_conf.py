@@ -6,7 +6,7 @@ class ConfirmationViewsTestCase(testing.views.BaseViewTestCase):
     layer = testing.layers.MongoTestLayer
 
     from stackcite.users import resources
-    RESOURCE_CLASS = resources.ConfResource
+    RESOURCE_CLASS = resources.ConfirmResource
 
     from stackcite.users.views import ConfirmationViews
     VIEW_CLASS = ConfirmationViews
@@ -26,7 +26,7 @@ class ConfirmationViewsCreateTestCase(ConfirmationViewsTestCase):
         view = self.make_view()
         email = 'test@email.com'
         password = 'T3stPa$$word'
-        from stackcite import data as db
+        from stackcite.users import models
         user = models.User.new(email, password, save=True)
         view.request.json_body = {'email': email}
         view.create()

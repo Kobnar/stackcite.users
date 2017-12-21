@@ -3,7 +3,7 @@ import unittest
 from stackcite.api import testing
 
 
-class ConfResourceTestCase(unittest.TestCase):
+class ConfirmResourceTestCase(unittest.TestCase):
 
     layer = testing.layers.MongoTestLayer
 
@@ -12,13 +12,13 @@ class ConfResourceTestCase(unittest.TestCase):
         models.User.drop_collection()
         models.ConfirmToken.drop_collection()
         from stackcite.users import resources
-        self.collection = resources.ConfResource(None, 'confirmation')
+        self.collection = resources.ConfirmResource(None, 'confirmation')
 
 
-class ConfResourceCreateTestCase(ConfResourceTestCase):
+class ConfirmResourceCreateTestCase(ConfirmResourceTestCase):
 
     def test_unknown_user_raises_exception(self):
-        """ConfResource.create() raises exception for an unknown user
+        """ConfirmResource.create() raises exception for an unknown user
         """
         data = {'email': 'test@email.com'}
         import mongoengine
@@ -26,7 +26,7 @@ class ConfResourceCreateTestCase(ConfResourceTestCase):
             self.collection.create(data)
 
     def test_new_token_created_in_db(self):
-        """ConfResource.create() creates a new confirmation token
+        """ConfirmResource.create() creates a new confirmation token
         """
         from stackcite.users import models
         user = models.User.new('test@email.com', 'T3stPa$$word', save=True)
@@ -39,7 +39,7 @@ class ConfResourceCreateTestCase(ConfResourceTestCase):
             self.fail(err)
 
     def test_existing_token_replaced_in_db(self):
-        """ConfResource.create() creates a new confirmation token if one exists
+        """ConfirmResource.create() creates a new confirmation token if one exists
         """
         from stackcite.users import models
         user = models.User.new('test@email.com', 'T3stPa$$word', save=True)
@@ -51,7 +51,7 @@ class ConfResourceCreateTestCase(ConfResourceTestCase):
         self.assertEqual(expected, results)
 
     def test_returns_confirm_token(self):
-        """ConfResource.create() returns a ConfirmToken
+        """ConfirmResource.create() returns a ConfirmToken
         """
         from stackcite.users import models
         user = models.User.new('test@email.com', 'T3stPa$$word', save=True)
@@ -60,10 +60,10 @@ class ConfResourceCreateTestCase(ConfResourceTestCase):
         self.assertIsInstance(result, models.ConfirmToken)
 
 
-class ConfResourceUpdateTestCase(ConfResourceTestCase):
+class ConfirmResourceUpdateTestCase(ConfirmResourceTestCase):
 
     def test_unknown_key_raises_exception(self):
-        """ConfResource.update() raises exception for unknown key
+        """ConfirmResource.update() raises exception for unknown key
         """
         from stackcite.users import auth
         unknown_key = auth.utils.gen_key()
@@ -73,7 +73,7 @@ class ConfResourceUpdateTestCase(ConfResourceTestCase):
             self.collection.update(data)
 
     def test_sets_user_confirmed_in_db(self):
-        """ConfResource.update() confirms a known user account
+        """ConfirmResource.update() confirms a known user account
         """
         from stackcite.users import models
         user = models.User.new('test@email.com', 'T3stPa$$word', save=True)
@@ -84,7 +84,7 @@ class ConfResourceUpdateTestCase(ConfResourceTestCase):
         self.assertIsNotNone(result)
 
     def test_deletes_token(self):
-        """ConfResource.update() deletes existing token if successful
+        """ConfirmResource.update() deletes existing token if successful
         """
         from stackcite.users import models
         user = models.User.new('test@email.com', 'T3stPa$$word', save=True)
@@ -96,7 +96,7 @@ class ConfResourceUpdateTestCase(ConfResourceTestCase):
             models.ConfirmToken.objects.get(_key=key)
 
     def test_returns_confirm_token(self):
-        """ConfResource.update() returns 'True' if successful
+        """ConfirmResource.update() returns 'True' if successful
         """
         from stackcite.users import models
         user = models.User.new('test@email.com', 'T3stPa$$word', save=True)

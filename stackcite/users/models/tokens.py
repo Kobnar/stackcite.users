@@ -1,6 +1,5 @@
 from datetime import datetime
 import mongoengine
-from mongoengine import context_managers
 
 from stackcite.api import auth, data
 

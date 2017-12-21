@@ -12,7 +12,7 @@ class UserCollectionViews(views.APICollectionViews):
     def create(self):
         data = self.request.json_body
         schm = schema.User(strict=True, only=('id', 'email', 'password'))
-        data, errors = schm.load(data)
+        data = schm.load(data).data
         user = self.context.create(data)
         result, errors = schm.dump(user)
         self.request.response.status = 201

@@ -143,8 +143,8 @@ class AuthTokenIntegrationTestCase(AuthTokenBaseTestCase):
         from .. import tokens
         users.User.drop_collection()
         tokens.AuthToken.drop_collection()
-        self.user = users.User.new('test@email.com', 'T3stPa$$word')
-        self.api_token = tokens.AuthToken.new(self.user)
+        self.user = testing.utils.create_user('test@email.com', 'T3stPa$$word')
+        self.auth_token = tokens.AuthToken.new(self.user)
 
     def test_user_is_not_unique(self):
         """AuthToken.user is not a unique field
@@ -168,6 +168,18 @@ class AuthTokenIntegrationTestCase(AuthTokenBaseTestCase):
             tokens.AuthToken.objects.get(_key=key)
         except mongoengine.DoesNotExist as err:
             msg = 'Unexpected exception raised: {}'
+
+    def test_deleted_user_cascades_to_auth_token(self):
+        """AuthToken.user is set to cascade delete associated ConfirmToken
+        """
+        self.user.save()
+        self.auth_token.save()
+        key = self.auth_token.key
+        from stackcite.users import models
+        models.User.objects(id=self.auth_token.user.id).delete()
+        import mongoengine
+        with self.assertRaises(mongoengine.DoesNotExist):
+            models.ConfirmToken.objects.get(_key=key)
 
 
 class ConfirmTokenBaseTestCase(unittest.TestCase):
@@ -306,7 +318,7 @@ class ConfirmTokenIntegrationTestCase(ConfirmTokenBaseTestCase):
     def test_deleted_user_cascades_to_confirm_token(self):
         """ConfirmToken.user is set to cascade delete associated ConfirmToken
         """
-        self.conf_token.user.save()
+        self.user.save()
         self.conf_token.save()
         key = self.conf_token.key
         from stackcite.users import models
