@@ -1,11 +1,11 @@
 from mongoengine import context_managers
-from pyramid.view import view_defaults
+from pyramid.view import view_defaults, view_config
 
 from stackcite.api import views, exceptions
-from stackcite.users import data as db, schema
+from stackcite.users import data as db, resources, schema
 
 
-@view_defaults(renderer='json')
+@view_defaults(context=resources.ConfResource, renderer='json')
 class ConfirmationViews(views.BaseView):
 
     METHODS = {
@@ -13,6 +13,7 @@ class ConfirmationViews(views.BaseView):
         'PUT': 'update',
     }
 
+    @view_config(request_method='POST')
     @views.managed_view
     def create(self):
         data = self.request.json_body
@@ -21,6 +22,7 @@ class ConfirmationViews(views.BaseView):
         self.context.create(data)
         return exceptions.APINoContent()
 
+    @view_config(request_method='PUT')
     @views.managed_view
     def update(self):
         data = self.request.json_body
