@@ -3,12 +3,12 @@ import mongoengine
 
 from datetime import datetime
 
-from stackcite import config
-from stackcite import data
+from stackcite.api import auth
+from stackcite.api import data
 
-from stackcite.validators import data as validators
+from stackcite.api.data import validators
 
-from . import exceptions
+from stackcite.users import exceptions
 
 
 class User(data.IDocument):
@@ -16,12 +16,12 @@ class User(data.IDocument):
     A user account.
     """
 
-    DEFAULT_GROUPS = [config.auth.USERS]
+    DEFAULT_GROUPS = [auth.USERS]
 
     email = mongoengine.EmailField(required=True, unique=True)
 
     _groups = mongoengine.ListField(
-        mongoengine.StringField(choices=config.auth.GROUP_CHOICES), db_field='groups')
+        mongoengine.StringField(choices=auth.GROUP_CHOICES), db_field='groups')
     _joined = mongoengine.DateTimeField(db_field='joined', required=True)
     _confirmed = mongoengine.DateTimeField(db_field='confirmed')
     _last_login = mongoengine.DateTimeField(db_field='last_login')

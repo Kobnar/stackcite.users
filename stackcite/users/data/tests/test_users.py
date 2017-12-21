@@ -2,15 +2,14 @@ import unittest
 
 import mongoengine
 
-from stackcite import testing
-from stackcite.data import testing as testing_data
+from stackcite.users import testing
 
 
 class UserBaseTestCase(unittest.TestCase):
 
     def setUp(self):
-        from .. import models
-        self.user = models.User()
+        from .. import users
+        self.user = users.User()
 
 
 class UserUnitTestCase(UserBaseTestCase):
@@ -62,7 +61,7 @@ class UserUnitTestCase(UserBaseTestCase):
     def test_add_group_adds_valid_group(self):
         """User.add_group() adds a valid group
         """
-        from stackcite.config import auth
+        from stackcite.users import auth
         try:
             self.user.add_group(auth.STAFF)
         except ValueError as err:
@@ -72,7 +71,7 @@ class UserUnitTestCase(UserBaseTestCase):
     def test_add_group_does_not_add_duplicate_group(self):
         """User.add_group() will not add a duplicate group
         """
-        from stackcite.config import auth
+        from stackcite.users import auth
         self.user.add_group(auth.USERS)
         expected = [auth.USERS]
         result = self.user.groups
@@ -81,7 +80,7 @@ class UserUnitTestCase(UserBaseTestCase):
     def test_remove_group_removes_valid_group(self):
         """User.remove_group() removes a valid group
         """
-        from stackcite.config import auth
+        from stackcite.users import auth
         self.user.add_group('staff')
         try:
             self.user.remove_group(auth.STAFF)
@@ -92,7 +91,7 @@ class UserUnitTestCase(UserBaseTestCase):
     def test_add_group_raises_exception_for_invalid_group(self):
         """User.add_group() raises exception for invalid group
         """
-        from stackcite.validators import data as validators
+        from stackcite.api.data import validators
         with self.assertRaises(validators.ValidationError):
             self.user.add_group('invalid')
 
@@ -127,8 +126,8 @@ class UserUnitTestCase(UserBaseTestCase):
         """User.confirm() adds user to default group
         """
         self.user.confirm()
-        from ..models import User
-        default_groups = User.DEFAULT_GROUPS
+        from stackcite.users import data as db
+        default_groups = db.User.DEFAULT_GROUPS
         for g in default_groups:
             self.assertIn(g, self.user.groups)
 
@@ -190,7 +189,7 @@ class UserUnitTestCase(UserBaseTestCase):
     def test_set_password_passes_validation_with_valid_passwords(self):
         """User.set_password() accepts valid passwords
         """
-        test_data = testing.data.valid_passwords()
+        test_data = testing.data.validation.valid_passwords()
         for valid_password in test_data:
             try:
                 self.user.set_password(valid_password)
@@ -201,8 +200,8 @@ class UserUnitTestCase(UserBaseTestCase):
     def test_set_password_fails_validation_with_invalid_passwords(self):
         """User.set_password() raises exception for invalid passwords
         """
-        test_data = testing.data.invalid_passwords()
-        from stackcite.validators import data as validators
+        test_data = testing.data.validation.invalid_passwords()
+        from stackcite.api.data import validators
         for invalid_password in test_data:
             with self.assertRaises(validators.ValidationError):
                 self.user.set_password(invalid_password)
@@ -217,8 +216,8 @@ class UserUnitTestCase(UserBaseTestCase):
         """User.check_password() raises exception for invalid passwords
         """
         self.user.set_password('T3stPa$$word')
-        test_data = testing.data.invalid_passwords()
-        from stackcite.validators import data as validators
+        test_data = testing.data.validation.invalid_passwords()
+        from stackcite.api.data import validators
         for invalid_password in test_data:
             with self.assertRaises(validators.ValidationError):
                 self.user.check_password(invalid_password)
@@ -226,7 +225,7 @@ class UserUnitTestCase(UserBaseTestCase):
     def test_check_password_matches_correct_passwords(self):
         """User.check_password() returns True for correct passwords
         """
-        test_data = testing.data.valid_passwords()
+        test_data = testing.data.validation.valid_passwords()
         for password in test_data:
             self.user.set_password(password)
             result = self.user.check_password(password)
@@ -235,7 +234,7 @@ class UserUnitTestCase(UserBaseTestCase):
     def test_check_password_fails_incorrect_passwords(self):
         """User.check_password() returns False for incorrect passwords
         """
-        test_data = testing.data.valid_passwords()
+        test_data = testing.data.validation.valid_passwords()
         for password in test_data:
             self.user.set_password(password)
             result = self.user.check_password('Wr0ngPa$$word')
@@ -253,7 +252,7 @@ class UserUnitTestCase(UserBaseTestCase):
     def test_password_fails_validation_with_invalid_passwords(self):
         """User.password setter raises exception for invalid passwords
         """
-        from stackcite.validators import data as validators
+        from stackcite.api.data import validators
         with self.assertRaises(validators.ValidationError):
             self.user.password = 'invalid_password'
 
@@ -288,21 +287,21 @@ class UserUnitTestCase(UserBaseTestCase):
 
 class UserIntegrationTestCase(UserBaseTestCase):
 
-    layer = testing_data.layers.MongoIntegrationTestLayer
+    layer = testing.layers.MongoTestLayer
 
     def setUp(self):
-        from .. import models
-        models.User.drop_collection()
+        from .. import users
+        users.User.drop_collection()
         super().setUp()
 
     def test_email_is_unique(self):
         """User.email
         """
-        from .. import models
+        from .. import users
         self.user.email = 'test@email.com'
         self.user.set_password('T3stPa$$word')
         self.user.save()
-        dup_user = models.User()
+        dup_user = users.User()
         dup_user.email = 'test@email.com'
         dup_user.set_password('T3stPa$$word')
         with self.assertRaises(mongoengine.NotUniqueError):
@@ -311,15 +310,15 @@ class UserIntegrationTestCase(UserBaseTestCase):
     def test_new_does_not_save_if_save_not_set(self):
         """User.new() does not save new user by default
         """
-        from .. import models
-        user = models.User.new('test@email.com', 'T3stPa$$word')
+        from .. import users
+        user = users.User.new('test@email.com', 'T3stPa$$word')
         self.assertIsNone(user.id)
 
     def test_new_saves_user_if_save_set(self):
         """User.new() saves data if 'save=True'
         """
-        from .. import models
-        user = models.User.new('test@email.com', 'T3stPa$$word', True)
+        from .. import users
+        user = users.User.new('test@email.com', 'T3stPa$$word', True)
         self.assertIsNotNone(user.id)
 
     def test_authenticate_correct_password_returns_user(self):
@@ -328,8 +327,8 @@ class UserIntegrationTestCase(UserBaseTestCase):
         self.user.email = 'test@email.com'
         self.user.set_password('T3stPa$$word')
         self.user.save()
-        from .. import models
-        result = models.User.authenticate(self.user.email, 'T3stPa$$word')
+        from .. import users
+        result = users.User.authenticate(self.user.email, 'T3stPa$$word')
         self.assertEqual(self.user, result)
 
     def test_authenticate_incorrect_password_raises_exception(self):
@@ -338,7 +337,7 @@ class UserIntegrationTestCase(UserBaseTestCase):
         self.user.email = 'test@email.com'
         self.user.set_password('T3stPa$$word')
         self.user.save()
-        from .. import models
+        from .. import users
         from stackcite.users.exceptions import AuthenticationError
         with self.assertRaises(AuthenticationError):
-            models.User.authenticate(self.user.email, 'Wr0ngPa$$word')
+            users.User.authenticate(self.user.email, 'Wr0ngPa$$word')
