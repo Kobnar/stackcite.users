@@ -318,7 +318,7 @@ class UserIntegrationTestCase(UserBaseTestCase):
         """User.new() saves models if 'save=True'
         """
         from .. import users
-        user = users.User.new('test@email.com', 'T3stPa$$word', True)
+        user = users.User.new('test@email.com', 'T3stPa$$word', save=True)
         self.assertIsNotNone(user.id)
 
     def test_authenticate_correct_password_returns_user(self):

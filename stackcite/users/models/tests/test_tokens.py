@@ -144,7 +144,7 @@ class AuthTokenIntegrationTestCase(AuthTokenBaseTestCase):
         users.User.drop_collection()
         tokens.AuthToken.drop_collection()
         self.user = testing.utils.create_user('test@email.com', 'T3stPa$$word')
-        self.auth_token = tokens.AuthToken.new(self.user)
+        self.auth_token = testing.utils.create_auth_token(self.user)
 
     def test_user_is_not_unique(self):
         """AuthToken.user is not a unique field
@@ -179,7 +179,7 @@ class AuthTokenIntegrationTestCase(AuthTokenBaseTestCase):
         models.User.objects(id=self.auth_token.user.id).delete()
         import mongoengine
         with self.assertRaises(mongoengine.DoesNotExist):
-            models.ConfirmToken.objects.get(_key=key)
+            models.AuthToken.objects.get(_key=key)
 
 
 class ConfirmTokenBaseTestCase(unittest.TestCase):
@@ -263,7 +263,7 @@ class ConfirmTokenIntegrationTestCase(ConfirmTokenBaseTestCase):
         users.User.drop_collection()
         tokens.ConfirmToken.drop_collection()
         self.user = testing.utils.create_user('test@email.com', 'T3stPa$$word')
-        self.conf_token = tokens.ConfirmToken.new(self.user)
+        self.conf_token = testing.utils.create_conf_token(self.user)
 
     def test_new_saves_token_to_db_if_specified(self):
         """ConfirmToken.new() saves new token to database if 'save=True' is set
