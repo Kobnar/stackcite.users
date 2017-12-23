@@ -73,6 +73,7 @@ class UserUnitTestCase(UserBaseTestCase):
         """
         from stackcite.users import auth
         self.user.add_group(auth.USERS)
+        self.user.add_group(auth.USERS)
         expected = [auth.USERS]
         result = self.user.groups
         self.assertEqual(expected, result)
