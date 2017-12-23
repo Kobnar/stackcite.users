@@ -3,22 +3,14 @@ import unittest
 from stackcite.api import testing
 
 
-def _make_request(key):
-    from pyramid.testing import DummyRequest
-    api_header = {'API_KEY': key}
-    request = DummyRequest()
-    request.headers.update(api_header)
-    return request
-
-
 class AuthPolicyIntegrationTestCase(unittest.TestCase):
 
     layer = testing.layers.MongoTestLayer
 
     def setUp(self):
         from stackcite.users import models
-        from ..policies import AuthTokenAuthenticationPolicy
-        self.auth_pol = AuthTokenAuthenticationPolicy()
+        from .. import policies
+        self.auth_pol = policies.AuthTokenAuthenticationPolicy()
         models.User.drop_collection()
         models.AuthToken.drop_collection()
         self.user = models.User.new('test@email.com', 'T3stPa$$word', save=True)

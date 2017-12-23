@@ -40,7 +40,6 @@ def get_user(request):
     try:
         if request.token:
             with context_managers.no_dereference(request.token) as token:
-                # TODO: Use a SessionUser object
                 return token.user
     except (ValueError, TypeError, mongoengine.DoesNotExist):
         return None
