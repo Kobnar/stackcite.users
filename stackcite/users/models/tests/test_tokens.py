@@ -8,8 +8,8 @@ class TokenKeyFieldTestCase(unittest.TestCase):
     layer = testing.layers.UnitTestLayer
 
     def setUp(self):
-        from ..tokens import TokenKeyField
-        self.field = TokenKeyField()
+        from .. import tokens
+        self.field = tokens.TokenKeyField()
 
     def test_validate_accepts_valid_token_key(self):
         """TokenKeyField.validate() accepts a valid token key
@@ -32,16 +32,12 @@ class TokenKeyFieldTestCase(unittest.TestCase):
                 self.field.validate(key)
 
 
-class AuthTokenBaseTestCase(unittest.TestCase):
-    pass
-
-
-class AuthTokenUnitTestCase(AuthTokenBaseTestCase):
+class AuthTokenUnitTestCase(unittest.TestCase):
 
     layer = testing.layers.UnitTestLayer
 
     def setUp(self):
-        user = testing.utils.create_user('test@email.com', 'T3stPa$$word')
+        user = testing.utils.create_user('test@email.com')
         self.api_token = testing.utils.create_auth_token(user)
 
     def test_key_is_readonly(self):
@@ -54,8 +50,7 @@ class AuthTokenUnitTestCase(AuthTokenBaseTestCase):
         """AuthToken.user field is read-only
         """
         with self.assertRaises(AttributeError):
-            self.api_token.user = testing.utils.create_user(
-                'test@email.com', 'T3stPa$$word')
+            self.api_token.user = testing.utils.create_user('test@email.com')
 
     def test_issued_is_readonly(self):
         """AuthToken.issued field is read-only
@@ -125,10 +120,10 @@ class AuthTokenUnitTestCase(AuthTokenBaseTestCase):
         """AuthToken() raises exception for invalid key string
         """
         from datetime import datetime
-        from ..tokens import AuthToken
+        from .. import tokens
         from mongoengine import ValidationError
         user = self.api_token.user
-        invalid_token = AuthToken(
+        invalid_token = tokens.AuthToken(
             _user=user,
             _key='A bad token',
             _issued=datetime.utcnow())
@@ -136,7 +131,7 @@ class AuthTokenUnitTestCase(AuthTokenBaseTestCase):
             invalid_token.validate()
 
 
-class AuthTokenIntegrationTestCase(AuthTokenBaseTestCase):
+class AuthTokenIntegrationTestCase(unittest.TestCase):
 
     layer = testing.layers.MongoTestLayer
 
@@ -161,7 +156,8 @@ class AuthTokenIntegrationTestCase(AuthTokenBaseTestCase):
             self.fail(err)
 
     def test_new_saves_token_to_db_if_specified(self):
-        """AuthToken.new() saves new token to database if 'save=True' is set"""
+        """AuthToken.new() saves new token to database if 'save=True' is set
+        """
         self.user.save()
         from .. import tokens
         key = tokens.AuthToken.new(self.user, save=True).key
@@ -170,6 +166,7 @@ class AuthTokenIntegrationTestCase(AuthTokenBaseTestCase):
             tokens.AuthToken.objects.get(_key=key)
         except mongoengine.DoesNotExist as err:
             msg = 'Unexpected exception raised: {}'
+            self.fail(msg.format(err))
 
     def test_deleted_user_cascades_to_auth_token(self):
         """AuthToken.user is set to cascade delete associated ConfirmToken
@@ -184,11 +181,7 @@ class AuthTokenIntegrationTestCase(AuthTokenBaseTestCase):
             models.AuthToken.objects.get(_key=key)
 
 
-class ConfirmTokenBaseTestCase(unittest.TestCase):
-    pass
-
-
-class ConfirmTokenUnitTestCase(ConfirmTokenBaseTestCase):
+class ConfirmTokenUnitTestCase(unittest.TestCase):
 
     layer = testing.layers.UnitTestLayer
 
@@ -255,7 +248,7 @@ class ConfirmTokenUnitTestCase(ConfirmTokenBaseTestCase):
             invalid_token.validate()
 
 
-class ConfirmTokenIntegrationTestCase(ConfirmTokenBaseTestCase):
+class ConfirmTokenIntegrationTestCase(unittest.TestCase):
 
     layer = testing.layers.MongoTestLayer
 
