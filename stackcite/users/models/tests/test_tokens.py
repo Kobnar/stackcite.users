@@ -11,23 +11,25 @@ class TokenKeyFieldTestCase(unittest.TestCase):
         from ..tokens import TokenKeyField
         self.field = TokenKeyField()
 
-    def test_validate_accepts_valid_isbn10s(self):
+    def test_validate_accepts_valid_token_key(self):
         """TokenKeyField.validate() accepts a valid token key
         """
-        valid_key = '2107d2510eee901146dad0b54ef67176726a790f68ce240065296b71'
+        valid_keys = testing.data.validation.valid_keys()
         from mongoengine import ValidationError
-        try:
-            self.field.validate(valid_key)
-        except ValidationError as err:
-            self.fail(err)
+        for key in valid_keys:
+            try:
+                self.field.validate(key)
+            except ValidationError as err:
+                self.fail(err)
 
-    def test_validate_raises_exception_for_invalid_isbns(self):
+    def test_validate_raises_exception_for_invalid_token_keys(self):
         """TokenKeyField.validate() raises exception for invalid token key
         """
-        invalid_key = 'derp'
+        invalid_keys = testing.data.validation.invalid_keys()
         from mongoengine import ValidationError
-        with self.assertRaises(ValidationError):
-            self.field.validate(invalid_key)
+        for key in invalid_keys:
+            with self.assertRaises(ValidationError):
+                self.field.validate(key)
 
 
 class AuthTokenBaseTestCase(unittest.TestCase):
