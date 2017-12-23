@@ -1,3 +1,5 @@
+from pyramid import testing as pyramid_testing
+
 from stackcite.users import models
 
 
@@ -24,3 +26,10 @@ def create_conf_token(user, clean=True, save=False):
     if save:
         token.save()
     return token
+
+
+def create_request(key=None):
+    api_header = {'Authorization': key} if key else {}
+    request = pyramid_testing.DummyRequest()
+    request.headers.update(api_header)
+    return request
