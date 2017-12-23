@@ -41,58 +41,58 @@ class GetAuthTokenIntegrationTestCase(AuthUtilsBaseIntegrationTestCase):
         """get_token() returns the correct token from request
         """
         from pyramid.testing import DummyRequest
-        from ..utils import get_token
+        from .. import utils
         key = self.token.key
         request = DummyRequest()
         request.authorization = 'Key', key
-        result = get_token(request)
+        result = utils.get_token(request)
         self.assertEqual(self.token, result)
 
     def test_invalid_key_returns_none(self):
         """get_token() returns None if key is invalid
         """
         from pyramid.testing import DummyRequest
-        from ..utils import get_token
+        from .. import utils
         request = DummyRequest()
         request.authorization = 'Key', 'invalid_key'
-        result = get_token(request)
+        result = utils.get_token(request)
         self.assertIsNone(result)
 
     def test_invalid_auth_type_returns_none(self):
         """get_token() returns None if auth type is invalid
         """
         from pyramid.testing import DummyRequest
-        from ..utils import get_token
+        from .. import utils
         key = self.token.key
         request = DummyRequest()
         request.authorization = 'Invalid', key
-        request.token = get_token(request)
-        result = get_token(request)
+        request.token = utils.get_token(request)
+        result = utils.get_token(request)
         self.assertIsNone(result)
 
     def test_basic_auth_type_returns_none(self):
         """get_token() returns None if auth type is basic
         """
         from pyramid.testing import DummyRequest
-        from ..utils import get_token
+        from .. import utils
         key = self.token.key
         request = DummyRequest()
         request.authorization = 'Basic', key
-        result = get_token(request)
+        result = utils.get_token(request)
         self.assertIsNone(result)
 
     def test_deleted_user_does_not_raise_exception(self):
         """get_token() does not raise exception for deleted user
         """
         from pyramid.testing import DummyRequest
-        from ..utils import get_token
+        from .. import utils
         key = self.token.key
         request = DummyRequest()
         request.authorization = 'Key', key
         self.user.delete()
         from mongoengine import InvalidDocumentError
         try:
-            get_token(request)
+            utils.get_token(request)
         except InvalidDocumentError as err:
             msg = 'Unexpected exception raised: {}'.format(err)
             self.fail(msg=msg)
@@ -104,13 +104,23 @@ class GetUserIntegrationTestCase(AuthUtilsBaseIntegrationTestCase):
         """get_user() returns user associated with a request
         """
         from pyramid.testing import DummyRequest
-        from ..utils import get_user
+        from .. import utils
         key = self.token.key
         request = DummyRequest()
         request.authorization = 'Key', key
         request.token = self.token
-        result = get_user(request)
+        result = utils.get_user(request)
         self.assertEqual(self.user, result)
+
+    def test_get_user_returns_none(self):
+        """get_user() returns None if no token is set
+        """
+        from pyramid.testing import DummyRequest
+        from .. import utils
+        request = DummyRequest()
+        request.token = None
+        result = utils.get_user(request)
+        self.assertIsNone(result)
 
 
 class GetGroupsIntegrationTestCase(AuthUtilsBaseIntegrationTestCase):
@@ -119,10 +129,10 @@ class GetGroupsIntegrationTestCase(AuthUtilsBaseIntegrationTestCase):
         """get_groups() returns groups associated with a matching user
         """
         from pyramid.testing import DummyRequest
-        from ..utils import get_groups
+        from .. import utils
         expected = self.user.groups
         user_id = self.user.id
         request = DummyRequest()
         request.user = self.user
-        result = get_groups(user_id, request)
+        result = utils.get_groups(user_id, request)
         self.assertEqual(expected, result)

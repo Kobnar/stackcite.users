@@ -1,6 +1,6 @@
 import unittest
 
-from stackcite.api import testing
+from stackcite.users import testing
 
 
 class AuthPolicyIntegrationTestCase(unittest.TestCase):
@@ -15,6 +15,15 @@ class AuthPolicyIntegrationTestCase(unittest.TestCase):
         models.AuthToken.drop_collection()
         self.user = models.User.new('test@email.com', 'T3stPa$$word', save=True)
         self.token = models.AuthToken.new(self.user, save=True)
+
+    def test_authenticated_userid_returns_none(self):
+        """AuthTokenAuthenticaitonPolicy.authenticated_userid() returns None if user.id not set
+        """
+        from pyramid.testing import DummyRequest
+        request = DummyRequest()
+        request.user = None
+        result = self.auth_pol.authenticated_userid(request)
+        self.assertIsNone(result)
 
     def test_authenticated_userid_returns_user_id(self):
         """AuthTokenAuthenticationPolicy.authenticated_userid() returns an authenticated ObjectId
