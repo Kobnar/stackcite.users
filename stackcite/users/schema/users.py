@@ -49,7 +49,7 @@ class User(api_schema.APICollectionSchema):
 
     id = api_fields.ObjectIdField(dump_only=True)
     email = fields.Email()
-    password = api_fields.PasswordField()
+    password = api_fields.PasswordField(load_only=True)
     new_password = api_fields.PasswordField(load_only=True)
     groups = fields.List(api_fields.GroupField())
 
