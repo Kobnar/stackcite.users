@@ -66,3 +66,23 @@ class UserCollectionCreateViewsTests(UserCollectionViewsTests):
         except DoesNotExist as err:
             msg = 'Unexpected exception raised: {}'
             self.fail(msg.format(err))
+
+
+class UserDocumentViewsTests(testing.views.APIViewTestCase):
+
+    layer = testing.layers.MongoTestLayer
+
+    from stackcite.users import resources
+    from stackcite.users import views
+    RESOURCE_CLASS = resources.UserDocument
+    VIEW_CLASS = views.UserDocumentViews
+
+    def setUp(self):
+        from stackcite.users import models
+        models.User.drop_collection()
+
+    def test_update_wrong_password_raises_exception(self):
+        """UserDocumentViews.update() raises exception for wrong password
+        """
+        view = self.make_view()
+        self.fail('Need tests for update with WRONG password.')

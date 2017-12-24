@@ -1,7 +1,19 @@
 from pyramid.view import view_defaults, view_config
 
-from stackcite.api import views
-from stackcite.users import resources, schema
+from stackcite.api import views, exceptions as api_exc
+from stackcite.users import resources, schema, exceptions as exc
+
+
+@view_defaults(context=resources.UserDocument, renderer='json')
+class UserDocumentViews(views.APIDocumentViews):
+
+    @view_config(request_method='PUT', permission='update')
+    @views.managed_view
+    def update(self):
+        try:
+            return super().update()
+        except exc.AuthenticationError:
+            raise api_exc.APIAuthenticationFailed()
 
 
 @view_defaults(context=resources.UserCollection, renderer='json')
