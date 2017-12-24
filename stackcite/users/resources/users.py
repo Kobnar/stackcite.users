@@ -4,7 +4,7 @@ from contextlib import suppress
 from pyramid import security as sec
 
 from stackcite.api import auth, resources
-from stackcite.users import models, schema
+from stackcite.users import models, schema, exceptions as exc
 
 
 _LOG = logging.getLogger(__name__)
@@ -26,6 +26,8 @@ class UserDocument(resources.APIDocumentResource):
             password = data.pop('password')
             if user.check_password(password):
                 data['password'] = data.pop('new_password')
+            else:
+                raise exc.AuthenticationError()
         return super().update(data)
 
     def delete(self):
