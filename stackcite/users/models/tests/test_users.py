@@ -213,7 +213,7 @@ class UserUnitTestCase(UserBaseTestCase):
         result = self.user.check_password('T3stPa$$word')
         self.assertFalse(result)
 
-    def test_check_password_fails_validation_with_invalid_passwords(self):
+    def test_check_password_raises_exception_for_invalid_passwords(self):
         """User.check_password() raises exception for invalid passwords
         """
         self.user.set_password('T3stPa$$word')
