@@ -19,9 +19,6 @@ class AuthViewsTests(testing.views.CollectionViewTestCase):
     def make_view(self, name='api_v1'):
         return super().make_view(name)
 
-
-class AuthViewsCreateTests(AuthViewsTests):
-
     def test_create_success_returns_201(self):
         """AuthViews.create() success returns 201 CREATED
         """
@@ -73,3 +70,39 @@ class AuthViewsCreateTests(AuthViewsTests):
         view.request.json_body = data
         with(self.assertRaises(exc.APIAuthenticationFailed)):
             view.create()
+
+    def test_retrieve_returns_token(self):
+        """AuthViews.retrieve() returns an auth token
+        """
+        user = testing.utils.create_user(
+            'test@email.com', 'T3stPa$$word', save=True)
+        token = testing.utils.create_auth_token(user, save=True)
+        expected = {'key': str(token.id)}
+        view = self.make_view()
+        view.request.token = token
+        result = view.retrieve()
+        self.assertEqual(expected, result)
+
+    def test_update_returns_token(self):
+        """AuthViews.update() returns an auth token
+        """
+        user = testing.utils.create_user(
+            'test@email.com', 'T3stPa$$word', save=True)
+        token = testing.utils.create_auth_token(user, save=True)
+        expected = {'key': str(token.id)}
+        view = self.make_view()
+        view.request.token = token
+        result = view.update()
+        self.assertEqual(expected, result)
+
+    def test_delete_raises_exception(self):
+        """AuthViews.delete() raises exception
+        """
+        user = testing.utils.create_user(
+            'test@email.com', 'T3stPa$$word', save=True)
+        token = testing.utils.create_auth_token(user, save=True)
+        view = self.make_view()
+        view.request.token = token
+        from stackcite.api import exceptions as exc
+        with self.assertRaises(exc.APINoContent):
+            view.delete()
