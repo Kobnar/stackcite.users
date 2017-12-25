@@ -1,7 +1,7 @@
-from stackcite.api import testing
+from stackcite.users import testing
 
 
-class UserCollectionViewsTests(testing.views.APIViewTestCase):
+class UserCollectionCreateViewTests(testing.views.CollectionViewTestCase):
 
     layer = testing.layers.MongoTestLayer
 
@@ -13,9 +13,6 @@ class UserCollectionViewsTests(testing.views.APIViewTestCase):
     def setUp(self):
         from stackcite.users import models
         models.User.drop_collection()
-
-
-class UserCollectionCreateViewsTests(UserCollectionViewsTests):
 
     def test_email_required(self):
         """UserCollectionViews.create() requires an email
@@ -68,21 +65,32 @@ class UserCollectionCreateViewsTests(UserCollectionViewsTests):
             self.fail(msg.format(err))
 
 
-class UserDocumentViewsTests(testing.views.APIViewTestCase):
+class UserDocumentViewTests(testing.views.DocumentViewTestCase):
 
     layer = testing.layers.MongoTestLayer
 
     from stackcite.users import resources
     from stackcite.users import views
-    RESOURCE_CLASS = resources.UserDocument
+    RESOURCE_CLASS = resources.UserCollection
     VIEW_CLASS = views.UserDocumentViews
 
     def setUp(self):
         from stackcite.users import models
         models.User.drop_collection()
 
+    def make_view(self, object_id=None, name='documents'):
+        return super().make_view(object_id, name)
+
     def test_update_wrong_password_raises_exception(self):
         """UserDocumentViews.update() raises exception for wrong password
         """
-        view = self.make_view()
-        self.fail('Need tests for update with WRONG password.')
+        user = testing.utils.create_user(
+            'test@email.com', 'T3stPa$$word', save=True)
+        view = self.make_view(user.id)
+        params = {
+            'password': 'Wr0ngPa$$word',
+            'new_password': '0therPa$$word'}
+        view.request.json_body = params
+        from stackcite.api import exceptions as exc
+        with self.assertRaises(exc.APIAuthenticationFailed):
+            view.update()
