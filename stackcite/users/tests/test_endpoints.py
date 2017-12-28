@@ -18,15 +18,13 @@ class UsersEndpointTests(testing.endpoints.APIEndpointTestCase):
             'password': 'T3stPa$$word'
         }
 
-    def authenticate_user(self, email, password):
-        auth_data = {
-            'email': email,
-            'password': password}
-        response = self.test_app.post_json(
-            '/auth/',
-            params=auth_data,
-            expect_errors=True)
-        return response.json_body['key']
+    @staticmethod
+    def authenticate_user(email, password):
+        from stackcite.users import models
+        user = models.User.authenticate(email, password)
+        token = testing.utils.create_auth_token(user, save=True)
+        key = str(token.key)
+        return key
 
 
 class UsersCollectionEndpointTests(UsersEndpointTests):
