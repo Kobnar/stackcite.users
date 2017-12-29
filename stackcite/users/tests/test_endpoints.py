@@ -47,7 +47,7 @@ class AuthEndpointTests(testing.endpoints.APIEndpointTestCase):
         self.assertIsNotNone(result)
 
     def test_create_invalid_json_body_returns_400(self):
-        """POST with a malformed JSON body returns 400
+        """POST with a malformed JSON body returns 400 BAD REQUEST
         """
         json_data = '{"this": is {horrible": data}'
         response = self.test_app.post(
@@ -56,7 +56,7 @@ class AuthEndpointTests(testing.endpoints.APIEndpointTestCase):
         self.assertEqual(400, result)
 
     def test_create_invalid_data_returns_400(self):
-        """POST with invalid data returns 400
+        """POST with invalid data returns 400 BAD REQUEST
         """
         json_data = {'email': 'invalid_email', 'password': 'invalid_password'}
         response = self.test_app.post_json(
@@ -65,13 +65,13 @@ class AuthEndpointTests(testing.endpoints.APIEndpointTestCase):
         self.assertEqual(400, result)
 
     def test_create_wrong_credentials_returns_400(self):
-        """POST with wrong credentials returns 400
+        """POST with wrong credentials returns 403 FORBIDDEN
         """
         json_data = {'email': 'test@email.com', 'password': 'Wr0ngPa$$word'}
         response = self.test_app.post_json(
             '/auth/', params=json_data, expect_errors=True)
         result = response.status_code
-        self.assertEqual(400, result)
+        self.assertEqual(403, result)
 
     def test_retrieve_returns_403(self):
         """GET returns 403 FORBIDDEN
