@@ -140,6 +140,56 @@ class AuthEndpointTests(testing.endpoints.APIEndpointTestCase):
         self.assertEqual(204, result)
 
 
+class ConfEndpointTests(testing.endpoints.APIEndpointTestCase):
+
+    layer = testing.layers.MongoTestLayer
+
+    def setUp(self):
+        from stackcite.users import models
+        models.User.drop_collection()
+        models.ConfirmToken.drop_collection()
+        super().setUp()
+        auth_data = {
+            'email': 'test@email.com',
+            'password': 'T3stPa$$word'}
+        self.user = testing.utils.create_user(**auth_data, save=True)
+
+    def test_create_returns_201(self):
+        """Successful POST returns 201 CREATED
+        """
+        json_data = {'email': 'test@email.com'}
+        response = self.test_app.post_json('/conf/', params=json_data)
+        result = response.status_code
+        self.assertEqual(201, result)
+
+    def test_create_returns_empty_body(self):
+        """Successful POST returns None
+        """
+        json_data = {'email': 'test@email.com'}
+        response = self.test_app.post_json('/conf/', params=json_data)
+        result = response.json_body
+        self.assertIsNone(result)
+
+    def test_update_returns_200(self):
+        """Successful PUT returns 200 OK
+        """
+        conf_token = testing.utils.create_conf_token(self.user, save=True)
+        json_data = {'key': conf_token.key}
+        response = self.test_app.put_json('/conf/', params=json_data)
+        result = response.status_code
+        self.assertEqual(200, result)
+
+    def test_update_returns_user_id(self):
+        """Successful PUT returns 200 OK
+        """
+        conf_token = testing.utils.create_conf_token(self.user, save=True)
+        json_data = {'key': conf_token.key}
+        response = self.test_app.put_json('/conf/', params=json_data)
+        expected = str(self.user.id)
+        result = response.json_body['user']['id']
+        self.assertEqual(expected, result)
+
+
 class UsersEndpointTests(testing.endpoints.APIEndpointTestCase):
 
     layer = testing.layers.MongoTestLayer

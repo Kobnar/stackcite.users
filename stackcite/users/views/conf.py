@@ -15,7 +15,7 @@ class ConfirmationViews(views.BaseView):
         schm = schema.CreateConfirmationToken(strict=True)
         data = schm.load(data).data
         self.context.create(data)
-        return exceptions.APINoContent()
+        self.request.response.status_code = 201
 
     @view_config(request_method='PUT')
     @views.managed_view
