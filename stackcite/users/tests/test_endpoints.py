@@ -1,6 +1,145 @@
 from stackcite.users import testing
 
 
+def _authenticate_user(email, password):
+    from stackcite.users import models
+    user = models.User.authenticate(email, password)
+    token = testing.utils.create_auth_token(user, save=True)
+    key = str(token.key)
+    return key
+
+
+class AuthEndpointTests(testing.endpoints.APIEndpointTestCase):
+
+    layer = testing.layers.MongoTestLayer
+
+    def setUp(self):
+        from stackcite.users import models
+        models.User.drop_collection()
+        models.AuthToken.drop_collection()
+        super().setUp()
+        user = testing.utils.create_user(**self.auth_data, save=True)
+        self.user_id = str(user.id)
+
+    @property
+    def auth_data(self):
+        return {
+            'email': 'test@email.com',
+            'password': 'T3stPa$$word'
+        }
+
+    @staticmethod
+    def authenticate_user(email, password):
+        return _authenticate_user(email, password)
+
+    def test_create_returns_201(self):
+        """Successful POST returns 201 CREATED
+        """
+        response = self.test_app.post_json('/auth/', params=self.auth_data)
+        result = response.status_code
+        self.assertEqual(201, result)
+
+    def test_create_returns_key(self):
+        """Successful POST returns key field
+        """
+        response = self.test_app.post_json('/auth/', params=self.auth_data)
+        result = response.json_body.get('key')
+        self.assertIsNotNone(result)
+
+    def test_create_invalid_json_body_returns_400(self):
+        """POST with a malformed JSON body returns 400
+        """
+        json_data = '{"this": is {horrible": data}'
+        response = self.test_app.post(
+            '/auth/', params=json_data, expect_errors=True)
+        result = response.status_code
+        self.assertEqual(400, result)
+
+    def test_create_invalid_data_returns_400(self):
+        """POST with invalid data returns 400
+        """
+        json_data = {'email': 'invalid_email', 'password': 'invalid_password'}
+        response = self.test_app.post_json(
+            '/auth/', params=json_data, expect_errors=True)
+        result = response.status_code
+        self.assertEqual(400, result)
+
+    def test_create_wrong_credentials_returns_400(self):
+        """POST with wrong credentials returns 400
+        """
+        json_data = {'email': 'test@email.com', 'password': 'Wr0ngPa$$word'}
+        response = self.test_app.post_json(
+            '/auth/', params=json_data, expect_errors=True)
+        result = response.status_code
+        self.assertEqual(400, result)
+
+    def test_retrieve_returns_403(self):
+        """GET returns 403 FORBIDDEN
+        """
+        response = self.test_app.get('/auth/', expect_errors=True)
+        result = response.status_code
+        self.assertEqual(403, result)
+
+    def test_update_returns_403(self):
+        """GET returns 403 FORBIDDEN
+        """
+        response = self.test_app.get('/auth/', expect_errors=True)
+        result = response.status_code
+        self.assertEqual(403, result)
+
+    def test_delete_returns_403(self):
+        """GET returns 403 FORBIDDEN
+        """
+        response = self.test_app.get('/auth/', expect_errors=True)
+        result = response.status_code
+        self.assertEqual(403, result)
+
+    def test_authenticated_retrieve_returns_200(self):
+        """Authenticated GET returns 200 OK
+        """
+        key = self.authenticate_user(**self.auth_data)
+        headers = {'Authorization': 'key {}'.format(key)}
+        response = self.test_app.get('/auth/', headers=headers)
+        result = response.status_code
+        self.assertEqual(200, result)
+
+    def test_authenticated_retrieve_returns_key(self):
+        """Authenticated GET returns key field
+        """
+        key = self.authenticate_user(**self.auth_data)
+        headers = {'Authorization': 'key {}'.format(key)}
+        response = self.test_app.get('/auth/', headers=headers)
+        result = response.json_body.get('key')
+        self.assertIsNotNone(result)
+
+    def test_authenticated_update_returns_200(self):
+        """Authenticated PUT returns 200 OK
+        """
+        key = self.authenticate_user(**self.auth_data)
+        headers = {'Authorization': 'key {}'.format(key)}
+        response = self.test_app.put('/auth/', headers=headers)
+        result = response.status_code
+        self.assertEqual(200, result)
+
+    def test_authenticated_update_returns_key(self):
+        """Authenticated PUT returns key field
+        """
+        key = self.authenticate_user(**self.auth_data)
+        headers = {'Authorization': 'key {}'.format(key)}
+        response = self.test_app.put('/auth/', headers=headers)
+        result = response.json_body.get('key')
+        self.assertIsNotNone(result)
+
+    def test_authenticated_delete_returns_204(self):
+        """Authenticated DELETE returns 204 NO CONTENT
+        """
+        key = self.authenticate_user(**self.auth_data)
+        headers = {'Authorization': 'key {}'.format(key)}
+        response = self.test_app.delete('/auth/', headers=headers)
+        result = response.status_code
+        self.assertEqual(204, result)
+
+
 class UsersEndpointTests(testing.endpoints.APIEndpointTestCase):
 
     layer = testing.layers.MongoTestLayer
@@ -8,6 +147,7 @@ class UsersEndpointTests(testing.endpoints.APIEndpointTestCase):
     def setUp(self):
         from stackcite.users import models
         models.User.drop_collection()
+        models.AuthToken.drop_collection()
         models.ConfirmToken.drop_collection()
         super().setUp()
 
@@ -20,11 +160,7 @@ class UsersEndpointTests(testing.endpoints.APIEndpointTestCase):
 
     @staticmethod
     def authenticate_user(email, password):
-        from stackcite.users import models
-        user = models.User.authenticate(email, password)
-        token = testing.utils.create_auth_token(user, save=True)
-        key = str(token.key)
-        return key
+        return _authenticate_user(email, password)
 
 
 class UsersCollectionEndpointTests(UsersEndpointTests):
