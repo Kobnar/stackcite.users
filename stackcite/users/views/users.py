@@ -1,7 +1,7 @@
 from pyramid.view import view_defaults, view_config
 
 from stackcite.api import views, exceptions as api_exc
-from stackcite.users import resources, schema, exceptions as exc
+from stackcite.users import resources, exceptions as exc
 
 
 @view_defaults(context=resources.UserDocument, renderer='json')
@@ -23,9 +23,10 @@ class UserCollectionViews(views.APICollectionViews):
     @views.managed_view
     def create(self):
         data = self.request.json_body
-        schm = schema.User(strict=True, only=('id', 'email', 'password'))
+        schm = self.context.schema(
+            strict=True, only=('id', 'email', 'password'))
         data = schm.load(data).data
         user = self.context.create(data)
-        result, errors = schm.dump(user)
+        result = schm.dump(user).data
         self.request.response.status = 201
         return result
