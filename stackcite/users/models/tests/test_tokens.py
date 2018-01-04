@@ -168,18 +168,6 @@ class AuthTokenIntegrationTestCase(unittest.TestCase):
             msg = 'Unexpected exception raised: {}'
             self.fail(msg.format(err))
 
-    def test_deleted_user_cascades_to_auth_token(self):
-        """AuthToken.user is set to cascade delete associated ConfirmToken
-        """
-        self.user.save()
-        self.auth_token.save()
-        key = self.auth_token.key
-        from stackcite.users import models
-        models.User.objects(id=self.auth_token.user.id).delete()
-        import mongoengine
-        with self.assertRaises(mongoengine.DoesNotExist):
-            models.AuthToken.objects.get(_key=key)
-
 
 class ConfirmTokenUnitTestCase(unittest.TestCase):
 
@@ -309,15 +297,3 @@ class ConfirmTokenIntegrationTestCase(unittest.TestCase):
         expected = self.user.id
         result = self.conf_token.confirm_user().id
         self.assertEqual(expected, result)
-
-    def test_deleted_user_cascades_to_confirm_token(self):
-        """ConfirmToken.user is set to cascade delete associated ConfirmToken
-        """
-        self.user.save()
-        self.conf_token.save()
-        key = self.conf_token.key
-        from stackcite.users import models
-        models.User.objects(id=self.conf_token.user.id).delete()
-        import mongoengine
-        with self.assertRaises(mongoengine.DoesNotExist):
-            models.ConfirmToken.objects.get(_key=key)
