@@ -37,12 +37,9 @@ def get_user(request):
     Returns a user based on an API key located in the request header.
     """
 
-    try:
-        if request.token:
-            with context_managers.no_dereference(request.token) as token:
-                return token.user
-    except (ValueError, TypeError, mongoengine.DoesNotExist):
-        return None
+    if request.token:
+        with context_managers.no_dereference(request.token) as token:
+            return token.user
 
 
 def get_groups(user_id, request):

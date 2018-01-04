@@ -112,8 +112,8 @@ class GetUserIntegrationTestCase(AuthUtilsBaseIntegrationTestCase):
         result = utils.get_user(request)
         self.assertEqual(self.user, result)
 
-    def test_get_user_returns_none(self):
-        """get_user() returns None if no token is set
+    def test_get_user_returns_none_if_token_not_set(self):
+        """get_user() returns None if token is not set
         """
         from pyramid.testing import DummyRequest
         from .. import utils
