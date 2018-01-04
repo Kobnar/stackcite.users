@@ -22,12 +22,7 @@ class ConfirmResource(resources.APIIndexResource):
         """
         email = data['email']
         user = models.User.objects.get(email=email)
-        token = models.ConfirmToken.new(user)
-        try:
-            token.save()
-        except mongoengine.NotUniqueError:
-            models.ConfirmToken.objects(_user=user).delete()
-            token.save()
+        token = models.ConfirmToken.new(user, save=True)
         _LOG.info('Confirmation key: {} {}'.format(user.email, token.key))
         return token
 
