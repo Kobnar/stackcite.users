@@ -100,6 +100,17 @@ class UserSchemaCreateTests(UserSchemaTests):
         result = self.schema.load({}).errors
         self.assertNotIn('groups', result)
 
+    def test_valid_data_pass_validation(self):
+        """User POST schema passes validation with valid data
+        """
+        from stackcite.api import auth
+        data = {
+            'email': 'test@email.com',
+            'password': 'T3stPa$$word',
+            'groups': [auth.USERS, auth.STAFF, auth.ADMIN]}
+        result = self.schema.load(data).errors
+        self.assertEqual(0, len(result))
+
 
 class UserSchemaRetrieveTests(UserSchemaTests):
 
