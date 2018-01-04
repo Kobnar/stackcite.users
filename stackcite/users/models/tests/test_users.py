@@ -1,7 +1,5 @@
 import unittest
 
-import mongoengine
-
 from stackcite.users import testing
 
 
@@ -19,6 +17,7 @@ class UserUnitTestCase(UserBaseTestCase):
     def test_email_is_required(self):
         """User.email is a required field
         """
+        import mongoengine
         try:
             self.user.validate()
         except mongoengine.ValidationError as err:
@@ -29,6 +28,7 @@ class UserUnitTestCase(UserBaseTestCase):
     def test_joined_is_required(self):
         """User.joined is a required field
         """
+        import mongoengine
         try:
             self.user.validate(clean=False)
         except mongoengine.ValidationError as err:
@@ -39,6 +39,7 @@ class UserUnitTestCase(UserBaseTestCase):
     def test_set_password_call_is_required(self):
         """User.set_password() call is required to validate document
         """
+        import mongoengine
         try:
             self.user.validate()
         except mongoengine.ValidationError as err:
@@ -191,6 +192,7 @@ class UserUnitTestCase(UserBaseTestCase):
         """User.set_password() accepts valid passwords
         """
         test_data = testing.data.validation.valid_passwords()
+        import mongoengine
         for valid_password in test_data:
             try:
                 self.user.set_password(valid_password)
@@ -244,6 +246,7 @@ class UserUnitTestCase(UserBaseTestCase):
     def test_password_passes_validation_with_valid_passwords(self):
         """User.password setter accepts valid passwords
         """
+        import mongoengine
         try:
             self.user.password = 'T3stPa$$word'
         except mongoengine.ValidationError as err:
@@ -305,6 +308,7 @@ class UserIntegrationTestCase(UserBaseTestCase):
         dup_user = users.User()
         dup_user.email = 'test@email.com'
         dup_user.set_password('T3stPa$$word')
+        import mongoengine
         with self.assertRaises(mongoengine.NotUniqueError):
             dup_user.save()
 
