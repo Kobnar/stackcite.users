@@ -8,5 +8,10 @@ addons:
   hosts:
     - mongo
 install:
+  - mkdir deps
+  - git clone -b https://github.com/Kobnar/stackcite.api.git deps/stackcite.api
+  - cd deps/stackcite.api
+  - python setup.py develop
+  - ../..
   - python setup.py develop
 script: nose2
