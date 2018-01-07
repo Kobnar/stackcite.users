@@ -1,7 +1,7 @@
 from datetime import datetime
 import mongoengine
 
-from stackcite.api import auth, data
+from stackcite.api import auth, models
 
 from . import users
 
@@ -11,13 +11,13 @@ class TokenKeyField(mongoengine.StringField):
     A randomly generated string used as an API key.
     """
 
-    _validate_key = data.validators.KeyValidator()
+    _validate_key = models.validators.KeyValidator()
 
     def validate(self, value):
         super().validate(value)
         try:
             self._validate_key(value)
-        except data.validators.ValidationError as err:
+        except models.validators.ValidationError as err:
             raise mongoengine.ValidationError(err.message)
 
 

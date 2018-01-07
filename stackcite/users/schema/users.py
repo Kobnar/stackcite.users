@@ -47,7 +47,6 @@ def _validate_delete_user(data):
 
 class User(api_schema.APICollectionSchema):
 
-    id = api_fields.ObjectIdField(dump_only=True)
     email = fields.Email()
     password = api_fields.PasswordField(load_only=True)
     new_password = api_fields.PasswordField(load_only=True)

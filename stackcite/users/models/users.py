@@ -4,14 +4,14 @@ import mongoengine
 from datetime import datetime
 
 from stackcite.api import auth
-from stackcite.api import data
+from stackcite.api import models
 
-from stackcite.api.data import validators
+from stackcite.api.models import validators
 
 from stackcite.users import exceptions
 
 
-class User(data.IDocument):
+class User(models.IDocument):
     """
     A user account.
     """
