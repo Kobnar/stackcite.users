@@ -91,6 +91,7 @@ class UserDocumentViewTests(testing.views.DocumentViewTestCase):
             'password': 'Wr0ngPa$$word',
             'new_password': '0therPa$$word'}
         view.request.json_body = params
+        view.request.user = None
         from stackcite.api import exceptions as exc
         with self.assertRaises(exc.APIAuthenticationFailed):
             view.update()
