@@ -93,7 +93,7 @@ class UserUnitTestCase(UserBaseTestCase):
     def test_add_group_raises_exception_for_invalid_group(self):
         """User.add_group() raises exception for invalid group
         """
-        from stackcite.api.data import validators
+        from stackcite.api.models import validators
         with self.assertRaises(validators.ValidationError):
             self.user.add_group('invalid')
 
@@ -204,7 +204,7 @@ class UserUnitTestCase(UserBaseTestCase):
         """User.set_password() raises exception for invalid passwords
         """
         test_data = testing.data.validation.invalid_passwords()
-        from stackcite.api.data import validators
+        from stackcite.api.models import validators
         for invalid_password in test_data:
             with self.assertRaises(validators.ValidationError):
                 self.user.set_password(invalid_password)
@@ -220,7 +220,7 @@ class UserUnitTestCase(UserBaseTestCase):
         """
         self.user.set_password('T3stPa$$word')
         test_data = testing.data.validation.invalid_passwords()
-        from stackcite.api.data import validators
+        from stackcite.api.models import validators
         for invalid_password in test_data:
             with self.assertRaises(validators.ValidationError):
                 self.user.check_password(invalid_password)
@@ -256,7 +256,7 @@ class UserUnitTestCase(UserBaseTestCase):
     def test_password_fails_validation_with_invalid_passwords(self):
         """User.password setter raises exception for invalid passwords
         """
-        from stackcite.api.data import validators
+        from stackcite.api.models import validators
         with self.assertRaises(validators.ValidationError):
             self.user.password = 'invalid_password'
 

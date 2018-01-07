@@ -107,7 +107,7 @@ class UserDocumentTestCase(UserResourceTestCase):
         data = {
             'new_password': 'N3wPa$$word',
             'password': 'invalid_password'}
-        from stackcite.api.data.validators import exceptions as exc
+        from stackcite.api.models.validators import exceptions as exc
         with self.assertRaises(exc.ValidationError):
             self.doc_rec.update(data)
 
@@ -127,7 +127,7 @@ class UserDocumentTestCase(UserResourceTestCase):
         data = {
             'new_password': 'invalid_password',
             'password': 'T3stPa$$word'}
-        from stackcite.api.data.validators import exceptions as exc
+        from stackcite.api.models.validators import exceptions as exc
         with self.assertRaises(exc.ValidationError):
             self.doc_rec.update(data)
 
