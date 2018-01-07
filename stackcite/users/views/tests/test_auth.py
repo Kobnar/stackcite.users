@@ -71,28 +71,53 @@ class AuthViewsTests(testing.views.CollectionViewTestCase):
         with(self.assertRaises(exc.APIAuthenticationFailed)):
             view.create()
 
-    def test_retrieve_returns_token(self):
-        """AuthViews.retrieve() returns an auth token
+    def test_retrieve_returns_token_key(self):
+        """AuthViews.retrieve() returns an auth token with key
         """
         user = testing.utils.create_user(
             'test@email.com', 'T3stPa$$word', save=True)
         token = testing.utils.create_auth_token(user, save=True)
-        expected = {'key': str(token.id)}
+        expected = str(token.id)
         view = self.make_view()
         view.request.token = token
-        result = view.retrieve()
+        result = view.retrieve()['key']
         self.assertEqual(expected, result)
 
-    def test_update_returns_token(self):
-        """AuthViews.update() returns an auth token
+    def test_retrieve_returns_user_with_id(self):
+        """AuthViews.retrieve() returns a user with an ObjectId
         """
         user = testing.utils.create_user(
             'test@email.com', 'T3stPa$$word', save=True)
         token = testing.utils.create_auth_token(user, save=True)
-        expected = {'key': str(token.id)}
+        expected = str(user.id)
         view = self.make_view()
         view.request.token = token
-        result = view.update()
+        result = view.retrieve()['user']['id']
+        self.assertEqual(expected, result)
+
+    def test_retrieve_returns_user_with_groups(self):
+        """AuthViews.retrieve() returns a user with a list of groups
+        """
+        user = testing.utils.create_user(
+            'test@email.com', 'T3stPa$$word', save=True)
+        user.add_group('users')
+        token = testing.utils.create_auth_token(user, save=True)
+        expected = ['users']
+        view = self.make_view()
+        view.request.token = token
+        result = view.retrieve()['user']['groups']
+        self.assertEqual(expected, result)
+
+    def test_update_returns_token_key(self):
+        """AuthViews.update() returns an auth token with key
+        """
+        user = testing.utils.create_user(
+            'test@email.com', 'T3stPa$$word', save=True)
+        token = testing.utils.create_auth_token(user, save=True)
+        expected = str(token.id)
+        view = self.make_view()
+        view.request.token = token
+        result = view.update()['key']
         self.assertEqual(expected, result)
 
     def test_delete_raises_exception(self):

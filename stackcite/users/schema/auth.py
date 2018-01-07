@@ -12,7 +12,7 @@ class AuthToken(Schema):
 
     key = api_fields.AuthTokenKeyField(required=True)
 
-    user = mm_fields.Nested(users.User)
+    user = mm_fields.Nested(users.User(exclude=('email',)), dump_only=True)
     issued = mm_fields.DateTime(dump_only=True)
     touched = mm_fields.DateTime(dump_only=True)
 

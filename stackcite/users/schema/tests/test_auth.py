@@ -23,10 +23,7 @@ class AuthTokenTests(unittest.TestCase):
         from bson import ObjectId
         from stackcite.users import models
         expected = str(ObjectId())
-        user_data = {
-            'id': expected,
-            'email': 'test@email.com'}
-        user = models.User(**user_data)
+        user = models.User(id=expected)
         token = models.AuthToken.new(user)
         result = self.schema.dump(token).data['user']['id']
         self.assertEqual(expected, result)
@@ -36,32 +33,41 @@ class AuthTokenTests(unittest.TestCase):
         """
         from stackcite.users import models
         expected = ['users']
-        user_data = {'email': 'test@email.com'}
-        user = models.User(**user_data)
+        user = models.User()
         user.add_group('users')
         token = models.AuthToken.new(user)
         result = self.schema.dump(token).data['user']['groups']
         self.assertEqual(expected, result)
 
+    def test_dumps_excludes_email(self):
+        """AuthToken.dump() excludes 'email' field
+        """
+        from stackcite.users import models
+        user_data = {'email': 'test@email.com'}
+        user = models.User(**user_data)
+        token = models.AuthToken.new(user)
+        result = self.schema.dump(token).data['user']
+        self.assertNotIn('email', result)
+
     def test_dumps_issued(self):
-        """AuthToken.dump() includes an 'issued' field
+        """AuthToken.dump() includes 'issued' field
         """
         from stackcite.users import models
         from datetime import datetime
         now = datetime.utcnow()
-        user = models.User(email='test@email.com')
+        user = models.User()
         token = models.AuthToken(_user=user, _issued=now)
         expected = now.isoformat() + '+00:00'
         result = self.schema.dump(token).data['issued']
         self.assertEqual(expected, result)
 
     def test_dumps_touched(self):
-        """AuthToken.dump() includes a 'touched' field
+        """AuthToken.dump() includes 'touched' field
         """
         from stackcite.users import models
         from datetime import datetime
         now = datetime.utcnow()
-        user = models.User(email='test@email.com')
+        user = models.User()
         token = models.AuthToken(_user=user, _touched=now)
         expected = now.isoformat() + '+00:00'
         result = self.schema.dump(token).data['touched']
