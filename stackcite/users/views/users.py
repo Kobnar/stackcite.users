@@ -34,8 +34,7 @@ class UserCollectionViews(api_views.APICollectionViews):
     @utils.managed_view
     def create(self):
         data = self.request.json_body
-        schm = self.context.schema(
-            strict=True, only=('id', 'email', 'password'))
+        schm = self.context.schema(strict=True)
         data = schm.load(data).data
         user = self.context.create(data)
         result = schm.dump(user).data
