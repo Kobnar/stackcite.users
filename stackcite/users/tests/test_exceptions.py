@@ -3,7 +3,7 @@ import unittest
 from stackcite.users import testing
 
 
-class AuthenticationErrorBaseTestCase(unittest.TestCase):
+class AuthenticationErrorBaseTests(unittest.TestCase):
 
     layer = testing.layers.UnitTestLayer
 

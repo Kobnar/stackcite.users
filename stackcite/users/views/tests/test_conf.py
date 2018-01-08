@@ -1,7 +1,7 @@
 from stackcite.api import testing
 
 
-class ConfirmationViewsTestCase(testing.views.BaseViewTestCase):
+class ConfirmationViewsTests(testing.views.BaseViewTestCase):
 
     layer = testing.layers.MongoTestLayer
 
@@ -18,7 +18,7 @@ class ConfirmationViewsTestCase(testing.views.BaseViewTestCase):
         super().setUp()
 
 
-class ConfirmationViewsCreateTestCase(ConfirmationViewsTestCase):
+class ConfirmationViewsCreateTests(ConfirmationViewsTests):
 
     def test_create_creates_confirmation_token(self):
         """ConfirmationViews.create() creates ConfirmationToken in database
@@ -62,7 +62,7 @@ class ConfirmationViewsCreateTestCase(ConfirmationViewsTestCase):
             view.create()
 
 
-class ConfirmationViewsUpdateTestCase(ConfirmationViewsTestCase):
+class ConfirmationViewsUpdateTests(ConfirmationViewsTests):
 
     def setUp(self):
         super().setUp()

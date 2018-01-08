@@ -3,14 +3,14 @@ import unittest
 from stackcite.users import testing
 
 
-class UserResourceTestCase(unittest.TestCase):
+class UserResourceTests(unittest.TestCase):
 
     def setUp(self):
         from stackcite.users import resources
         self.col_rec = resources.UserCollection(None, 'users')
 
 
-class UserCollectionTestCase(UserResourceTestCase):
+class UserCollectionTests(UserResourceTests):
 
     layer = testing.layers.MongoTestLayer
 
@@ -55,7 +55,7 @@ class UserCollectionTestCase(UserResourceTestCase):
             self.fail(msg=msg.format(err))
 
 
-class UserDocumentTestCase(UserResourceTestCase):
+class UserDocumentTests(UserResourceTests):
 
     layer = testing.layers.MongoTestLayer
 

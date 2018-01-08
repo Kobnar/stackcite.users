@@ -9,7 +9,7 @@ def _authenticate_user(email, password):
     return key
 
 
-class AuthEndpointTests(testing.endpoints.APIEndpointTestCase):
+class AuthEndpointTests(testing.endpoints.APIEndpointTests):
 
     layer = testing.layers.MongoTestLayer
 
@@ -140,7 +140,7 @@ class AuthEndpointTests(testing.endpoints.APIEndpointTestCase):
         self.assertEqual(204, result)
 
 
-class ConfEndpointTests(testing.endpoints.APIEndpointTestCase):
+class ConfEndpointTests(testing.endpoints.APIEndpointTests):
 
     layer = testing.layers.MongoTestLayer
 
@@ -201,7 +201,7 @@ class ConfEndpointTests(testing.endpoints.APIEndpointTestCase):
         self.assertEqual(expected, result)
 
 
-class UsersEndpointTests(testing.endpoints.APIEndpointTestCase):
+class UsersEndpointTests(testing.endpoints.APIEndpointTests):
 
     layer = testing.layers.MongoTestLayer
 

@@ -3,7 +3,7 @@ import unittest
 from stackcite.api import testing
 
 
-class GenKeyTestCase(unittest.TestCase):
+class GenKeyTests(unittest.TestCase):
 
     layer = testing.layers.UnitTestLayer
 
@@ -23,7 +23,7 @@ class GenKeyTestCase(unittest.TestCase):
         self.assertNotEqual(first, second)
 
 
-class AuthUtilsBaseIntegrationTestCase(unittest.TestCase):
+class AuthUtilsBaseIntegrationTests(unittest.TestCase):
 
     layer = testing.layers.MongoTestLayer
 
@@ -35,7 +35,7 @@ class AuthUtilsBaseIntegrationTestCase(unittest.TestCase):
         self.token = models.AuthToken.new(self.user, save=True)
 
 
-class GetAuthTokenIntegrationTestCase(AuthUtilsBaseIntegrationTestCase):
+class GetAuthTokenIntegrationTests(AuthUtilsBaseIntegrationTests):
 
     def test_get_token_returns_correct_token(self):
         """get_token() returns the correct token from request
@@ -98,7 +98,7 @@ class GetAuthTokenIntegrationTestCase(AuthUtilsBaseIntegrationTestCase):
             self.fail(msg=msg)
 
 
-class GetUserIntegrationTestCase(AuthUtilsBaseIntegrationTestCase):
+class GetUserIntegrationTests(AuthUtilsBaseIntegrationTests):
 
     def test_get_user_returns_correct_user(self):
         """get_user() returns user associated with a request
@@ -123,7 +123,7 @@ class GetUserIntegrationTestCase(AuthUtilsBaseIntegrationTestCase):
         self.assertIsNone(result)
 
 
-class GetGroupsIntegrationTestCase(AuthUtilsBaseIntegrationTestCase):
+class GetGroupsIntegrationTests(AuthUtilsBaseIntegrationTests):
 
     def test_get_groups_returns_groups(self):
         """get_groups() returns groups associated with a matching user

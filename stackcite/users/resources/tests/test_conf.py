@@ -3,7 +3,7 @@ import unittest
 from stackcite.api import testing
 
 
-class ConfirmResourceTestCase(unittest.TestCase):
+class ConfirmResourceTests(unittest.TestCase):
 
     layer = testing.layers.MongoTestLayer
 
@@ -15,7 +15,7 @@ class ConfirmResourceTestCase(unittest.TestCase):
         self.collection = resources.ConfirmResource(None, 'confirmation')
 
 
-class ConfirmResourceCreateTestCase(ConfirmResourceTestCase):
+class ConfirmResourceCreateTests(ConfirmResourceTests):
 
     def test_unknown_user_raises_exception(self):
         """ConfirmResource.create() raises exception for an unknown user
@@ -60,7 +60,7 @@ class ConfirmResourceCreateTestCase(ConfirmResourceTestCase):
         self.assertIsInstance(result, models.ConfirmToken)
 
 
-class ConfirmResourceUpdateTestCase(ConfirmResourceTestCase):
+class ConfirmResourceUpdateTests(ConfirmResourceTests):
 
     def test_unknown_key_raises_exception(self):
         """ConfirmResource.update() raises exception for unknown key

@@ -3,7 +3,7 @@ import unittest
 from . import layers
 
 
-class APIEndpointTestCase(unittest.TestCase):
+class APIEndpointTests(unittest.TestCase):
 
     layer = layers.WSGITestLayer
 

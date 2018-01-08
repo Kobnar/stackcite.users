@@ -3,7 +3,7 @@ import unittest
 from stackcite.users import testing
 
 
-class CreateRequestTestCase(unittest.TestCase):
+class CreateRequestTests(unittest.TestCase):
 
     layer = testing.layers.UnitTestLayer
 
@@ -23,7 +23,7 @@ class CreateRequestTestCase(unittest.TestCase):
         self.assertEqual(result, key)
 
 
-class CreateUserTestCase(unittest.TestCase):
+class CreateUserTests(unittest.TestCase):
 
     layer = testing.layers.MongoTestLayer
 
@@ -52,7 +52,7 @@ class CreateUserTestCase(unittest.TestCase):
             self.fail(msg=err)
 
 
-class CreateAuthTokenTestCase(unittest.TestCase):
+class CreateAuthTokenTests(unittest.TestCase):
 
     layer = testing.layers.MongoTestLayer
 
@@ -82,7 +82,7 @@ class CreateAuthTokenTestCase(unittest.TestCase):
             self.fail(msg=err)
 
 
-class CreateConfTokenTestCase(unittest.TestCase):
+class CreateConfTokenTests(unittest.TestCase):
 
     layer = testing.layers.MongoTestLayer
 

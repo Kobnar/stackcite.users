@@ -3,7 +3,7 @@ import unittest
 from stackcite.users import testing
 
 
-class AuthResourceIntegrationTestCase(unittest.TestCase):
+class AuthResourceIntegrationTests(unittest.TestCase):
 
     layer = testing.layers.MongoTestLayer
 

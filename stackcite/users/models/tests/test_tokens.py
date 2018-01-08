@@ -3,7 +3,7 @@ import unittest
 from stackcite.users import testing
 
 
-class TokenKeyFieldTestCase(unittest.TestCase):
+class TokenKeyFieldTests(unittest.TestCase):
 
     layer = testing.layers.UnitTestLayer
 
