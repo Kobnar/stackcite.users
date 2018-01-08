@@ -3,14 +3,14 @@ import unittest
 from stackcite.users import testing
 
 
-class UserBaseTestCase(unittest.TestCase):
+class UserBaseTests(unittest.TestCase):
 
     def setUp(self):
         from .. import users
         self.user = users.User()
 
 
-class UserUnitTestCase(UserBaseTestCase):
+class UserUnitTests(UserBaseTests):
 
     layer = testing.layers.UnitTestLayer
 
@@ -289,7 +289,7 @@ class UserUnitTestCase(UserBaseTestCase):
         self.assertEqual(first_dtg, second_dtg)
 
 
-class UserIntegrationTestCase(UserBaseTestCase):
+class UserIntegrationTests(UserBaseTests):
 
     layer = testing.layers.MongoTestLayer
 

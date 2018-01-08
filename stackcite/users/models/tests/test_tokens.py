@@ -32,13 +32,16 @@ class TokenKeyFieldTestCase(unittest.TestCase):
                 self.field.validate(key)
 
 
-class AuthTokenUnitTestCase(unittest.TestCase):
-
-    layer = testing.layers.UnitTestLayer
+class AuthTokenTests(unittest.TestCase):
 
     def setUp(self):
-        user = testing.utils.create_user('test@email.com')
-        self.api_token = testing.utils.create_auth_token(user)
+        self.user = testing.utils.create_user('test@email.com')
+        self.api_token = testing.utils.create_auth_token(self.user)
+
+
+class AuthTokenUnitTests(AuthTokenTests):
+
+    layer = testing.layers.UnitTestLayer
 
     def test_key_is_readonly(self):
         """AuthToken.key field is read-only
@@ -131,7 +134,7 @@ class AuthTokenUnitTestCase(unittest.TestCase):
             invalid_token.validate()
 
 
-class AuthTokenIntegrationTestCase(unittest.TestCase):
+class AuthTokenIntegrationTests(AuthTokenTests):
 
     layer = testing.layers.MongoTestLayer
 
@@ -140,8 +143,8 @@ class AuthTokenIntegrationTestCase(unittest.TestCase):
         from .. import tokens
         users.User.drop_collection()
         tokens.AuthToken.drop_collection()
-        self.user = testing.utils.create_user('test@email.com', 'T3stPa$$word')
-        self.auth_token = testing.utils.create_auth_token(self.user)
+        super().setUp()
+        self.user.password = 'T3stPa$$word'
 
     def test_user_is_not_unique(self):
         """AuthToken.user is not a unique field
@@ -169,13 +172,16 @@ class AuthTokenIntegrationTestCase(unittest.TestCase):
             self.fail(msg.format(err))
 
 
-class ConfirmTokenUnitTestCase(unittest.TestCase):
-
-    layer = testing.layers.UnitTestLayer
+class ConfirmTokenTests(unittest.TestCase):
 
     def setUp(self):
-        user = testing.utils.create_user('test@email.com', 'T3stPa$$word')
-        self.conf_token = testing.utils.create_conf_token(user)
+        self.user = testing.utils.create_user('test@email.com', 'T3stPa$$word')
+        self.conf_token = testing.utils.create_conf_token(self.user)
+
+
+class ConfirmTokenUnitTests(ConfirmTokenTests):
+
+    layer = testing.layers.UnitTestLayer
 
     def test_key_is_readonly(self):
         """ConfirmToken.key field is read-only
@@ -236,7 +242,7 @@ class ConfirmTokenUnitTestCase(unittest.TestCase):
             invalid_token.validate()
 
 
-class ConfirmTokenIntegrationTestCase(unittest.TestCase):
+class ConfirmTokenIntegrationTests(ConfirmTokenTests):
 
     layer = testing.layers.MongoTestLayer
 
@@ -245,8 +251,8 @@ class ConfirmTokenIntegrationTestCase(unittest.TestCase):
         from .. import tokens
         users.User.drop_collection()
         tokens.ConfirmToken.drop_collection()
-        self.user = testing.utils.create_user('test@email.com', 'T3stPa$$word')
-        self.conf_token = testing.utils.create_conf_token(self.user)
+        super().setUp()
+        self.user.password = 'T3stPa$$word'
 
     def test_new_saves_token_to_db_if_specified(self):
         """ConfirmToken.new() saves new token to database if 'save=True' is set
