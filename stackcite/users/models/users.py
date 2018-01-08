@@ -5,9 +5,7 @@ from datetime import datetime
 
 from stackcite.api import auth
 from stackcite.api import models
-
 from stackcite.api.models import validators
-
 from stackcite.users import exceptions
 
 
