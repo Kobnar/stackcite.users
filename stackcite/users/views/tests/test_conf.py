@@ -46,6 +46,21 @@ class ConfirmationViewsCreateTestCase(ConfirmationViewsTestCase):
         with self.assertRaises(exc.APIValidationError):
             view.create()
 
+    def test_confirmed_user_raises_403_FORBIDDEN(self):
+        """ConfirmationViews.Create() returns 403 FORBIDDEN if user already confirmed
+        """
+        view = self.make_view()
+        email = 'test@email.com'
+        password = 'T3stPa$$word'
+        from stackcite.users import auth, models
+        user = models.User.new(email, password)
+        user.add_group(auth.USERS)
+        user.save()
+        view.request.json_body = {'email': email}
+        from stackcite.api import exceptions as exc
+        with self.assertRaises(exc.APIForbidden):
+            view.create()
+
 
 class ConfirmationViewsUpdateTestCase(ConfirmationViewsTestCase):
 

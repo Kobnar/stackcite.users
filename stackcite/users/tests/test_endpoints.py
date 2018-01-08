@@ -170,6 +170,17 @@ class ConfEndpointTests(testing.endpoints.APIEndpointTestCase):
         result = response.json_body
         self.assertIsNone(result)
 
+    def test_create_confirmed_user_returns_403(self):
+        """POST request for a confirmed user returns 403 FORBIDDEN
+        """
+        from stackcite.users import auth
+        self.user.add_group(auth.USERS)
+        self.user.save()
+        json_data = {'email': 'test@email.com'}
+        response = self.test_app.post_json('/conf/', params=json_data, expect_errors=True)
+        result = response.status_code
+        self.assertEqual(403, result)
+
     def test_update_returns_200(self):
         """Successful PUT returns 200 OK
         """
